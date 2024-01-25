@@ -9,6 +9,8 @@ project "Tram"
     targetdir "bin/%{cfg.buildcfg}"
     location "build/"
 
+    includedirs {"libs/toml11/"}
+
     files {"src/**.hpp", "src/**.cpp"}
 
     filter "configurations:Debug"
