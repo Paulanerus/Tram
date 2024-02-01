@@ -16,7 +16,6 @@ namespace Tram
 
         std::vector<std::string> AsVector(const size_t argc, char *argv[], size_t start = 0)
         {
-
             if (start >= argc)
                 return {};
 
