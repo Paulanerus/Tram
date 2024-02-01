@@ -1,9 +1,12 @@
 #include <iostream>
 
-#include "toml.hpp"
+#include "cli/arg_parser.hpp"
 
 int main(int argc, char *argv[])
 {
-    std::cout << "Hello World!" << std::endl;
-    return 0;
+    auto args = Tram::Util::AsVector(argc, argv, 1);
+
+    Tram::CLI::handleArgs(std::move(args));
+
+    return EXIT_SUCCESS;
 }
