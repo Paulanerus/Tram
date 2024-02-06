@@ -4,6 +4,7 @@
 #include <iostream>
 #include <fstream>
 #include <cstdint>
+#include <algorithm>
 
 namespace Tram
 {
@@ -66,7 +67,10 @@ namespace Tram
 
             bool iBuild(const ScriptInfo &&info) noexcept
             {
-                std::ofstream file_out{"todo.lua", std::ios::trunc};
+                std::ofstream file_out{"tram.premake5.lua", std::ios::trunc};
+
+                if (!file_out.is_open())
+                    return false;
 
                 file_out << "workspace \"" << info.workspace_name << "\"\n\tconfigurations {\"Debug\", \"Release\"}\n\n";
 
