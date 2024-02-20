@@ -1,5 +1,7 @@
 #pragma once
 
+#include "../config/config.hpp"
+
 #include <string>
 #include <iostream>
 #include <fstream>
@@ -8,98 +10,64 @@
 
 namespace Tram
 {
-    namespace Premake
+    class ScriptBuilder
     {
-        enum class ProjectKind
+    public:
+        ScriptBuilder(const ScriptBuilder &builder) = delete;
+
+        ScriptBuilder &operator=(const ScriptBuilder &builder) = delete;
+
+        static bool build(const TramConfig &config) noexcept
         {
-            APP,
-
-            LIBRARY_DYNAMIC,
-
-            LIBRARY_STATIC,
+            return get().iBuild(config);
         };
 
-        enum class CppVersion : uint16_t
+    private:
+        ScriptBuilder() noexcept {};
+
+        static ScriptBuilder &get() noexcept
         {
-            CPP_98 = 98,
+            static ScriptBuilder instance;
 
-            CPP_11 = 11,
+            return instance;
+        }
 
-            CPP_14 = 14,
-
-            CPP_17 = 17,
-
-            CPP_20 = 20,
-        };
-
-        struct ScriptInfo
+        bool iBuild(const TramConfig &config) noexcept
         {
-            std::string workspace_name;
+            std::ofstream file_out{"tram.premake5.lua", std::ios::trunc};
 
-            std::string project_name;
+            if (!file_out.is_open())
+                return false;
 
-            ProjectKind kind;
+            const auto info = config.info();
 
-            CppVersion cpp_version;
-        };
+            file_out << "workspace \"" << info.project_name << "\"\n\tconfigurations {\"Debug\", \"Release\"}\n\n";
 
-        class ScriptBuilder
-        {
-        public:
-            ScriptBuilder(const ScriptBuilder &info) = delete;
+            file_out << "project \"" << info.project_name << "\"\n";
 
-            ScriptBuilder &operator=(const ScriptBuilder &info) = delete;
+            file_out << "\tkind \"" << (info.kind == ProjectKind::APP ? "ConsoleApp" : info.kind == ProjectKind::LIBRARY_DYNAMIC ? "SharedLib"
+                                                                                                                                 : "StaticLib")
+                     << "\"\n";
 
-            static bool build(const ScriptInfo &&info) noexcept
-            {
-                return get().iBuild(std::move(info));
-            };
+            file_out << "\tlanguage \"C++\"\n";
+            file_out << "\tcppdialect \"C++" << static_cast<std::underlying_type<CppVersion>::type>(info.cpp_version) << "\"\n";
+            file_out << "\tarchitecture \"x86_64\"\n";
+            file_out << "\ttargetdir \"bin/%{cfg.buildcfg}\"\n";
+            file_out << "\tlocation \"build/\"\n";
 
-        private:
-            ScriptBuilder() noexcept {};
+            file_out << "\n\n\n";
 
-            static ScriptBuilder &get() noexcept
-            {
-                static ScriptBuilder instance;
+            // Links
 
-                return instance;
-            }
+            // Inlcude Dirs
 
-            bool iBuild(const ScriptInfo &&info) noexcept
-            {
-                std::ofstream file_out{"tram.premake5.lua", std::ios::trunc};
+            file_out << "\tfiles {\"src/**.cpp\"" << (info.kind == ProjectKind::APP ? ", \"src/**.hpp\", \"src/**.h\"" : "") << "}\n\n";
 
-                if (!file_out.is_open())
-                    return false;
+            file_out << "\tfilter \"configurations:Debug\"\n\t\tdefines { \"DEBUG \"}\n\t\tsymbols \"On\"\n\n";
 
-                file_out << "workspace \"" << info.workspace_name << "\"\n\tconfigurations {\"Debug\", \"Release\"}\n\n";
+            file_out << "\tfilter \"configurations:Release\"\n\t\tdefines { \"NDEBUG \"}\n\t\tsymbols \"On\"\n";
 
-                file_out << "project \"" << info.project_name << "\"\n";
-
-                file_out << "\tkind \"" << (info.kind == ProjectKind::APP ? "ConsoleApp" : info.kind == ProjectKind::LIBRARY_DYNAMIC ? "SharedLib"
-                                                                                                                                     : "StaticLib")
-                         << "\"\n";
-
-                file_out << "\tlanguage \"C++\"\n";
-                file_out << "\tcppdialect \"C++" << static_cast<std::underlying_type<CppVersion>::type>(info.cpp_version) << "\"\n";
-                file_out << "\tarchitecture \"x86_64\"\n";
-                file_out << "\ttargetdir \"bin/%{cfg.buildcfg}\"\n";
-                file_out << "\tlocation \"build/\"\n";
-
-                file_out << "\n\n\n";
-
-                // Links
-
-                // Inlcude Dirs
-
-                file_out << "\tfiles {\"src/**.cpp\"" << (info.kind == ProjectKind::APP ? ", \"src/**.hpp\", \"src/**.h\"" : "") << "}\n\n";
-
-                file_out << "\tfilter \"configurations:Debug\"\n\t\tdefines { \"DEBUG \"}\n\t\tsymbols \"On\"\n\n";
-
-                file_out << "\tfilter \"configurations:Release\"\n\t\tdefines { \"NDEBUG \"}\n\t\tsymbols \"On\"\n";
-
-                return file_out.good();
-            }
-        };
-    }
+            return file_out.good();
+        }
+    };
 }

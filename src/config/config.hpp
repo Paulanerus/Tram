@@ -1,0 +1,113 @@
+#pragma once
+
+#include <string>
+#include <iostream>
+#include <vector>
+#include <optional>
+
+#include <toml.hpp>
+
+namespace Tram
+{
+    enum class ProjectKind : uint8_t
+    {
+        APP = 0,
+
+        LIBRARY_DYNAMIC = 1,
+
+        LIBRARY_STATIC = 2,
+    };
+
+    enum class CppVersion : uint16_t
+    {
+        CPP_98 = 98,
+
+        CPP_11 = 11,
+
+        CPP_14 = 14,
+
+        CPP_17 = 17,
+
+        CPP_20 = 20,
+    };
+
+    struct ProjectInfo
+    {
+        std::string project_name;
+
+        std::string version;
+
+        ProjectKind kind;
+
+        CppVersion cpp_version;
+
+        void from_toml(const toml::value &v)
+        {
+            this->project_name = toml::find<std::string>(v, "name");
+            this->version = toml::find<std::string>(v, "version");
+            this->cpp_version = static_cast<CppVersion>(toml::find<uint16_t>(v, "cpp_version"));
+            this->kind = static_cast<ProjectKind>(toml::find<uint8_t>(v, "kind"));
+        }
+
+        toml::value into_toml() const
+        {
+            return toml::value{
+                {"project", {{"cpp_version", static_cast<std::underlying_type<CppVersion>::type>(this->cpp_version)}, {"kind", static_cast<std::underlying_type<ProjectKind>::type>(this->kind)}, {"version", this->version}, {"name", this->project_name}}},
+            };
+        }
+    };
+
+    class TramConfig
+    {
+    public:
+        static std::optional<TramConfig> load()
+        {
+            const std::string config_filename{"example.toml"};
+
+            try
+            {
+                const auto config = toml::parse(config_filename);
+
+                auto info = toml::find<ProjectInfo>(config, "project");
+
+                std::cout << config << std::endl;
+
+                return {};
+            }
+            catch (toml::syntax_error &syntax_error)
+            {
+                std::cout << syntax_error.what() << std::endl;
+            }
+            catch (toml::type_error &type_error)
+            {
+                std::cout << "Oh no, can't find it..." << std::endl;
+            }
+
+            return {};
+        }
+
+        ProjectInfo info() const
+        {
+            return m_ProjectInfo;
+        }
+
+        std::vector<std::string> links() const
+        {
+            return m_Links;
+        }
+
+        std::vector<std::string> libraries() const
+        {
+            return m_Libs;
+        }
+
+    private:
+        const ProjectInfo m_ProjectInfo;
+
+        const std::vector<std::string> m_Links;
+
+        const std::vector<std::string> m_Libs;
+
+        TramConfig(ProjectInfo &&info, std::vector<std::string> &&links, std::vector<std::string> &&libs) noexcept : m_ProjectInfo(std::move(info)), m_Links(std::move(links)), m_Libs(std::move(libs)){};
+    };
+}
