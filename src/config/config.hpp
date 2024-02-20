@@ -7,6 +7,8 @@
 
 #include <toml.hpp>
 
+using StringVec = std::vector<std::string>;
+
 namespace Tram
 {
     enum class ProjectKind : uint8_t
@@ -70,9 +72,11 @@ namespace Tram
 
                 auto info = toml::find<ProjectInfo>(config, "project");
 
-                std::cout << config << std::endl;
+                auto links = toml::find<StringVec>(config, "dependencies", "links");
 
-                return {};
+                auto libs = toml::find<StringVec>(config, "dependencies", "libs");
+
+                return TramConfig{std::move(info), std::move(links), std::move(libs)};
             }
             catch (toml::syntax_error &syntax_error)
             {
@@ -104,10 +108,10 @@ namespace Tram
     private:
         const ProjectInfo m_ProjectInfo;
 
-        const std::vector<std::string> m_Links;
+        const StringVec m_Links;
 
-        const std::vector<std::string> m_Libs;
+        const StringVec m_Libs;
 
-        TramConfig(ProjectInfo &&info, std::vector<std::string> &&links, std::vector<std::string> &&libs) noexcept : m_ProjectInfo(std::move(info)), m_Links(std::move(links)), m_Libs(std::move(libs)){};
+        TramConfig(ProjectInfo &&info, StringVec &&links, StringVec &&libs) noexcept : m_ProjectInfo(std::move(info)), m_Links(std::move(links)), m_Libs(std::move(libs)){};
     };
 }
