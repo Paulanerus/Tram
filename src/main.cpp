@@ -1,8 +1,14 @@
 #include "cli/arg_parser.hpp"
 
+#include <toml.hpp>
+
 int main(int argc, char *argv[])
 {
-    auto args = Tram::Util::AsVector(argc, argv, 1);
+    toml::color::enable();
+
+    std::vector<std::string> args{argv + 1, argv + argc};
+    std::for_each(args.begin(), args.end(), [](std::string &str_in)
+                  { Tram::Util::ToLower(str_in); });
 
     Tram::CLI::ArgParser parser;
     parser.handle(std::move(args));
