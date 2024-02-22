@@ -6,6 +6,7 @@
 #include <iostream>
 #include <vector>
 #include <optional>
+#include <filesystem>
 
 #include <toml.hpp>
 
@@ -45,6 +46,9 @@ namespace Tram
         static std::optional<TramConfig> load()
         {
             const std::string config_filename{"example.toml"};
+
+            if (!std::filesystem::exists(config_filename))
+                return {};
 
             try
             {
