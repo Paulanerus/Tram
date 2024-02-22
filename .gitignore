@@ -4,5 +4,3 @@ bin/
 build/
 
 Makefile
-
-example.toml
