@@ -23,28 +23,46 @@ namespace Tram
     public:
         GenericBuilder(const std::string &tag, const std::string &value, bool is_child = false) : m_IsChild(is_child)
         {
-            m_Content << (is_child ? "\t" : "") << tag << " \"" << value << "\"\n";
+            m_Content << "\n"
+                      << (is_child ? "\t" : "") << tag << " \"" << value << "\"";
         }
 
         GenericBuilder(const std::string &tag, const StringVec &value, bool is_child = false) : m_IsChild(is_child)
         {
-            m_Content << (is_child ? "\t" : "") << tag << " {\""
+            m_Content << "\n"
+                      << (is_child ? "\t" : "") << tag << " {\""
                       << Tram::Util::Join(value, "\", \"")
-                      << "\"}\n";
+                      << "\"}";
         }
 
         GenericBuilder &addChild(const std::string &tag, const std::string &value)
         {
-            m_Content << (m_IsChild ? "\t\t" : "\t") << tag << " \"" << value << "\"\n";
+            m_Content << "\n"
+                      << (m_IsChild ? "\t\t" : "\t") << tag << " \"" << value << "\"";
 
             return *this;
         }
 
         GenericBuilder &addChild(const std::string &tag, const StringVec &value)
         {
-            m_Content << (m_IsChild ? "\t\t" : "\t") << tag << " {\""
+            m_Content << "\n"
+                      << (m_IsChild ? "\t\t" : "\t") << tag << " {\""
                       << Tram::Util::Join(value, "\", \"")
-                      << "\"}\n";
+                      << "\"}";
+
+            return *this;
+        }
+
+        GenericBuilder &newLine()
+        {
+            m_Content << "\n";
+
+            return *this;
+        }
+
+        GenericBuilder &append(GenericBuilder &other)
+        {
+            m_Content << other.build();
 
             return *this;
         }
@@ -59,111 +77,6 @@ namespace Tram
         std::stringstream m_Content;
 
         const bool m_IsChild;
-    };
-
-    class ProjectBuilder
-    {
-    public:
-        ProjectBuilder &name(const std::string &name)
-        {
-            m_Name = name;
-
-            return *this;
-        }
-
-        ProjectBuilder &kind(const ProjectKind &kind)
-        {
-            m_Kind = kind;
-
-            return *this;
-        }
-
-        ProjectBuilder &cppVersion(const CppVersion &cpp_version)
-        {
-            m_CppVersion = cpp_version;
-
-            return *this;
-        }
-
-        ProjectBuilder &language(const Language &language)
-        {
-            m_Language = language;
-
-            return *this;
-        }
-
-        ProjectBuilder &architecture(const Architecture &architecture)
-        {
-            m_Architecture = architecture;
-
-            return *this;
-        }
-
-        ProjectBuilder &targetDir(const std::string &target_dir)
-        {
-            m_TargetDir = target_dir;
-
-            return *this;
-        }
-
-        ProjectBuilder &location(const std::string &location)
-        {
-            m_Location = location;
-
-            return *this;
-        }
-
-        Project build();
-
-    private:
-        std::string m_Name;
-
-        ProjectKind m_Kind;
-
-        CppVersion m_CppVersion;
-
-        Language m_Language;
-
-        Architecture m_Architecture;
-
-        std::string m_TargetDir;
-
-        std::string m_Location;
-
-        ProjectBuilder() {}
-
-        friend class Project;
-    };
-
-    class Project
-    {
-    public:
-        static ProjectBuilder Builder()
-        {
-            return ProjectBuilder();
-        }
-
-        GenericBuilder &genericBuilder()
-        {
-            return m_GenericProjectBuilder;
-        }
-
-    private:
-        GenericBuilder m_GenericProjectBuilder;
-
-        Project(const std::string &name, const ProjectKind &kind, const CppVersion &cpp_version, const Language &language, const Architecture &architecture, const std::string &target_dir, const std::string &location) : m_GenericProjectBuilder("project", name, true)
-        {
-            m_GenericProjectBuilder
-                .addChild("kind", kind == ProjectKind::APP ? "ConsoleApp" : kind == ProjectKind::LIBRARY_DYNAMIC ? "SharedLib"
-                                                                                                                 : "StaticLib")
-                .addChild("cppdialect", VersionToString(cpp_version))
-                .addChild("language", language == Language::C ? "C" : "C++")
-                .addChild("architecture", ArchToString(architecture))
-                .addChild("targetdir", target_dir)
-                .addChild("location", location);
-        };
-
-        friend class ProjectBuilder;
     };
 
     class FilterBuilder
@@ -240,6 +153,145 @@ namespace Tram
         friend class FilterBuilder;
     };
 
+    class ProjectBuilder
+    {
+    public:
+        ProjectBuilder &name(const std::string &name)
+        {
+            m_Name = name;
+
+            return *this;
+        }
+
+        ProjectBuilder &kind(const ProjectKind &kind)
+        {
+            m_Kind = kind;
+
+            return *this;
+        }
+
+        ProjectBuilder &cppVersion(const CppVersion &cpp_version)
+        {
+            m_CppVersion = cpp_version;
+
+            return *this;
+        }
+
+        ProjectBuilder &language(const Language &language)
+        {
+            m_Language = language;
+
+            return *this;
+        }
+
+        ProjectBuilder &architecture(const Architecture &architecture)
+        {
+            m_Architecture = architecture;
+
+            return *this;
+        }
+
+        ProjectBuilder &targetDir(const std::string &target_dir)
+        {
+            m_TargetDir = target_dir;
+
+            return *this;
+        }
+
+        ProjectBuilder &location(const std::string &location)
+        {
+            m_Location = location;
+
+            return *this;
+        }
+
+        ProjectBuilder &links(const StringVec &links)
+        {
+            m_Builder.emplace_back("links", links, true);
+
+            return *this;
+        }
+
+        ProjectBuilder &libs(const StringVec &libs)
+        {
+            m_Builder.emplace_back("includedirs", libs, true);
+
+            return *this;
+        }
+
+        ProjectBuilder &files(const StringVec &files)
+        {
+            m_Builder.emplace_back("files", files, true);
+
+            return *this;
+        }
+
+        ProjectBuilder &filter(Filter &&filter)
+        {
+            m_Builder.emplace_back(std::move(filter.genericBuilder()));
+
+            return *this;
+        }
+
+        Project build();
+
+    private:
+        std::string m_Name;
+
+        ProjectKind m_Kind;
+
+        CppVersion m_CppVersion;
+
+        Language m_Language;
+
+        Architecture m_Architecture;
+
+        std::string m_TargetDir;
+
+        std::string m_Location;
+
+        std::vector<GenericBuilder> m_Builder;
+
+        ProjectBuilder() {}
+
+        friend class Project;
+    };
+
+    class Project
+    {
+    public:
+        static ProjectBuilder Builder()
+        {
+            return ProjectBuilder();
+        }
+
+        GenericBuilder &genericBuilder()
+        {
+            return m_GenericProjectBuilder;
+        }
+
+    private:
+        GenericBuilder m_GenericProjectBuilder;
+
+        Project(const std::string &name, const ProjectKind &kind, const CppVersion &cpp_version, const Language &language, const Architecture &architecture, const std::string &target_dir, const std::string &location, std::vector<GenericBuilder> &&children) : m_GenericProjectBuilder("project", name)
+        {
+            m_GenericProjectBuilder
+                .addChild("kind", kind == ProjectKind::APP ? "ConsoleApp" : kind == ProjectKind::LIBRARY_DYNAMIC ? "SharedLib"
+                                                                                                                 : "StaticLib")
+                .addChild("cppdialect", VersionToString(cpp_version))
+                .addChild("language", language == Language::C ? "C" : "C++")
+                .addChild("architecture", ArchToString(architecture))
+                .addChild("targetdir", target_dir)
+                .addChild("location", location)
+                .newLine();
+
+            std::for_each(children.begin(), children.end(), [&](GenericBuilder &child)
+                          { m_GenericProjectBuilder.append(child); });
+        };
+
+        friend class ProjectBuilder;
+    };
+
     class ScriptBuilder
     {
     public:
@@ -256,34 +308,6 @@ namespace Tram
         ScriptBuilder &project(Project &&project)
         {
             m_Builder.emplace_back(std::move(project.genericBuilder()));
-
-            return *this;
-        }
-
-        ScriptBuilder &links(const StringVec &links)
-        {
-            m_Builder.emplace_back("links", links, true);
-
-            return *this;
-        }
-
-        ScriptBuilder &libs(const StringVec &libs)
-        {
-            m_Builder.emplace_back("includedirs", libs, true);
-
-            return *this;
-        }
-
-        ScriptBuilder &files(const StringVec &files)
-        {
-            m_Builder.emplace_back("files", files, true);
-
-            return *this;
-        }
-
-        ScriptBuilder &filter(Filter &&filter)
-        {
-            m_Builder.emplace_back(std::move(filter.genericBuilder()));
 
             return *this;
         }
@@ -343,6 +367,6 @@ namespace Tram
 
     Project ProjectBuilder::build()
     {
-        return Project{m_Name, m_Kind, m_CppVersion, m_Language, m_Architecture, m_TargetDir, m_Location};
+        return Project{m_Name, m_Kind, m_CppVersion, m_Language, m_Architecture, m_TargetDir, m_Location, std::move(m_Builder)};
     }
 }
