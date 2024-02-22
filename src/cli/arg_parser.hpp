@@ -2,6 +2,7 @@
 
 #include "../util/strings.hpp"
 #include "../util/system.hpp"
+#include "../config/config.hpp"
 
 #include <unordered_map>
 #include <functional>
@@ -21,7 +22,7 @@ namespace Tram
 
             const std::vector<std::string> allowed_args;
 
-            const std::function<void(std::vector<std::string> &&args)> function;
+            const std::function<void(std::vector<std::string> &&args, TramConfig &config)> function;
         };
 
         class ArgParser
@@ -32,7 +33,7 @@ namespace Tram
                 auto help_cmd = Command{.description = "Shows help",
                                         .alternatives = {"h"},
                                         .allowed_args = {},
-                                        .function = [this](std::vector<std::string> &&args)
+                                        .function = [this](std::vector<std::string> &&args, TramConfig &config)
                                         {
                                             std::cout << "\n--------<Tram v2024.1.1>--------\n\n";
 
@@ -47,7 +48,7 @@ namespace Tram
                 auto new_cmd = Command{.description = "Creates a new  project",
                                        .alternatives = {"create", "c", "n"},
                                        .allowed_args = {""},
-                                       .function = [this](std::vector<std::string> &&args)
+                                       .function = [this](std::vector<std::string> &&args, TramConfig &config)
                                        {
                                            projectWizard(std::move(args));
                                        }};
@@ -57,9 +58,9 @@ namespace Tram
                 auto add_cmd = Command{.description = "Adds a new dependency",
                                        .alternatives = {"a"},
                                        .allowed_args = {"--branch", "--link"},
-                                       .function = [](std::vector<std::string> &&args)
+                                       .function = [](std::vector<std::string> &&args, TramConfig &config)
                                        {
-                                            //git add submodule libs/$dependency_name
+                                           // git add submodule libs/$dependency_name
 
                                            std::cout << "Adding dependency..." << std::endl;
                                        }};
@@ -69,7 +70,7 @@ namespace Tram
                 auto remove_cmd = Command{.description = "Removes a dependency",
                                           .alternatives = {"rm", "delete", "del"},
                                           .allowed_args = {},
-                                          .function = [](std::vector<std::string> &&args)
+                                          .function = [](std::vector<std::string> &&args, TramConfig &config)
                                           {
                                               // git rm <dependency>
 
@@ -81,7 +82,7 @@ namespace Tram
                 auto build_cmd = Command{.description = "Builds the project",
                                          .alternatives = {"b"},
                                          .allowed_args = {"debug", "release"},
-                                         .function = [](std::vector<std::string> &&args)
+                                         .function = [](std::vector<std::string> &&args, TramConfig &config)
                                          {
                                              // premake5 (gmake2 vsXXXX xcode)
                                              //  (make | msbuild | X)
@@ -94,7 +95,7 @@ namespace Tram
                 auto run_cmd = Command{.description = "Runs the project",
                                        .alternatives = {"b"},
                                        .allowed_args = {"debug", "release", "--build"},
-                                       .function = [](std::vector<std::string> &&args)
+                                       .function = [](std::vector<std::string> &&args, TramConfig &config)
                                        {
                                            //--build builds before runs the app
 
@@ -104,7 +105,7 @@ namespace Tram
                 m_Commands.insert(std::make_pair("run", run_cmd));
             }
 
-            void handle(std::vector<std::string> &&args)
+            void handle(std::vector<std::string> &&args, TramConfig &&config)
             {
                 if (args.empty())
                 {
@@ -122,7 +123,9 @@ namespace Tram
 
                 args.erase(args.begin());
 
-                command.value().function(std::move(args));
+                command.value().function(std::move(args), config);
+
+                config.save();
             }
 
         private:

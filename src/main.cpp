@@ -11,13 +11,16 @@ int main(int argc, char *argv[])
     std::for_each(args.begin(), args.end(), [](std::string &str_in)
                   { Tram::Util::ToLower(str_in); });
 
-    auto config = Tram::TramConfig::load();
+    const auto &config = Tram::TramConfig::load();
 
     if (!config.has_value())
+    {
+        std::cout << "Missing Tram.toml file! Please run tram new to create a new project." << std::endl;
         return EXIT_FAILURE;
+    }
 
     Tram::CLI::ArgParser parser;
-    parser.handle(std::move(args));
+    parser.handle(std::move(args), std::move(const_cast<Tram::TramConfig &>(config.value())));
 
     return EXIT_SUCCESS;
 }
