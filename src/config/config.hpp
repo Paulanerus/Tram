@@ -1,5 +1,7 @@
 #pragma once
 
+#include "../premake/configurations.hpp"
+
 #include <string>
 #include <iostream>
 #include <vector>
@@ -11,28 +13,6 @@ using StringVec = std::vector<std::string>;
 
 namespace Tram
 {
-    enum class ProjectKind : uint8_t
-    {
-        APP = 0,
-
-        LIBRARY_DYNAMIC = 1,
-
-        LIBRARY_STATIC = 2,
-    };
-
-    enum class CppVersion : uint16_t
-    {
-        CPP_98 = 98,
-
-        CPP_11 = 11,
-
-        CPP_14 = 14,
-
-        CPP_17 = 17,
-
-        CPP_20 = 20,
-    };
-
     struct ProjectInfo
     {
         std::string project_name;
@@ -72,19 +52,15 @@ namespace Tram
 
                 auto info = toml::find<ProjectInfo>(config, "project");
 
-                auto links = toml::find<StringVec>(config, "dependencies", "links");
+                auto links = toml::find_or<StringVec>(config, "dependencies", "links", StringVec{});
 
-                auto libs = toml::find<StringVec>(config, "dependencies", "libs");
+                auto libs = toml::find_or<StringVec>(config, "dependencies", "libs", StringVec{});
 
                 return TramConfig{std::move(info), std::move(links), std::move(libs)};
             }
             catch (toml::syntax_error &syntax_error)
             {
                 std::cout << syntax_error.what() << std::endl;
-            }
-            catch (toml::type_error &type_error)
-            {
-                std::cout << "Oh no, can't find it..." << std::endl;
             }
 
             return {};
