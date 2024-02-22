@@ -35,7 +35,10 @@ namespace Tram
         toml::value into_toml() const
         {
             return toml::value{
-                {"project", {{"cpp_version", static_cast<std::underlying_type<CppVersion>::type>(this->cpp_version)}, {"kind", static_cast<std::underlying_type<ProjectKind>::type>(this->kind)}, {"version", this->version}, {"name", this->project_name}}},
+                {"project", {
+                    {"cpp_version", static_cast<std::underlying_type<CppVersion>::type>(this->cpp_version)}, 
+                    {"kind", static_cast<std::underlying_type<ProjectKind>::type>(this->kind)}, 
+                    {"version", this->version}, {"name", this->project_name}}},
             };
         }
     };
@@ -45,14 +48,12 @@ namespace Tram
     public:
         static std::optional<TramConfig> load()
         {
-            const std::string config_filename{"example.toml"};
-
-            if (!std::filesystem::exists(config_filename))
+            if (!std::filesystem::exists(s_ConfigFilename))
                 return {};
 
             try
             {
-                const auto config = toml::parse(config_filename);
+                const auto config = toml::parse(s_ConfigFilename);
 
                 auto info = toml::find<ProjectInfo>(config, "project");
 
@@ -70,28 +71,46 @@ namespace Tram
             return {};
         }
 
-        ProjectInfo info() const
+        bool save() const
+        {
+            std::ofstream file_out{"Tram.toml", std::ios::trunc};
+
+            if (!file_out.is_open())
+                return false;
+
+            toml::value dependencies{
+                {"dependencies", {{"links", m_Links}, {"libs", m_Libraries}}},
+            };
+
+            file_out << m_ProjectInfo.into_toml() << dependencies;
+
+            return true;
+        }
+
+        ProjectInfo &info()
         {
             return m_ProjectInfo;
         }
 
-        std::vector<std::string> links() const
+        std::vector<std::string> &links()
         {
             return m_Links;
         }
 
-        std::vector<std::string> libraries() const
+        std::vector<std::string> &libraries()
         {
-            return m_Libs;
+            return m_Libraries;
         }
 
     private:
-        const ProjectInfo m_ProjectInfo;
+        inline const static std::string s_ConfigFilename{"Tram.toml"};
 
-        const StringVec m_Links;
+        mutable ProjectInfo m_ProjectInfo;
 
-        const StringVec m_Libs;
+        mutable StringVec m_Links;
 
-        TramConfig(ProjectInfo &&info, StringVec &&links, StringVec &&libs) noexcept : m_ProjectInfo(std::move(info)), m_Links(std::move(links)), m_Libs(std::move(libs)){};
+        mutable StringVec m_Libraries;
+
+        TramConfig(ProjectInfo &&info, StringVec &&links, StringVec &&libs) noexcept : m_ProjectInfo(std::move(info)), m_Links(std::move(links)), m_Libraries(std::move(libs)){};
     };
 }
