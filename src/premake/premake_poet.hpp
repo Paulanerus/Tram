@@ -23,32 +23,28 @@ namespace Tram
     public:
         GenericBuilder(const std::string &tag, const std::string &value, bool is_child = false) : m_IsChild(is_child)
         {
-            m_Content << "\n"
-                      << (is_child ? "\t" : "") << tag << " \"" << value << "\"";
+            m_Content << (is_child ? "\t" : "") << tag << " \"" << value << "\"";
+            newLine();
         }
 
         GenericBuilder(const std::string &tag, const StringVec &value, bool is_child = false) : m_IsChild(is_child)
         {
-            m_Content << "\n"
-                      << (is_child ? "\t" : "") << tag << " {\""
-                      << Tram::Util::Join(value, "\", \"")
-                      << "\"}";
+            m_Content << (is_child ? "\t" : "") << tag << " {\"" << Tram::Util::Join(value, "\", \"") << "\"}";
+            newLine();
         }
 
         GenericBuilder &addChild(const std::string &tag, const std::string &value)
         {
-            m_Content << "\n"
-                      << (m_IsChild ? "\t\t" : "\t") << tag << " \"" << value << "\"";
+            m_Content << (m_IsChild ? "\t\t" : "\t") << tag << " \"" << value << "\"";
+            newLine();
 
             return *this;
         }
 
         GenericBuilder &addChild(const std::string &tag, const StringVec &value)
         {
-            m_Content << "\n"
-                      << (m_IsChild ? "\t\t" : "\t") << tag << " {\""
-                      << Tram::Util::Join(value, "\", \"")
-                      << "\"}";
+            m_Content << (m_IsChild ? "\t\t" : "\t") << tag << " {\"" << Tram::Util::Join(value, "\", \"") << "\"}";
+            newLine();
 
             return *this;
         }
@@ -69,7 +65,7 @@ namespace Tram
 
         std::string build()
         {
-            m_Content << "\n";
+            newLine();
             return m_Content.str();
         }
 
