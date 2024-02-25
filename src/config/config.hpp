@@ -43,6 +43,8 @@ namespace Tram
     class TramConfig
     {
     public:
+        inline const static std::string s_ConfigFileName{"Tram.toml"};
+
         static TramConfig create(std::string &&project_name, ProjectKind &&kind, CppVersion &&cpp_version)
         {
             return TramConfig{ProjectInfo{std::move(project_name), "0.0.1", std::move(kind), std::move(cpp_version)}, {}, {}};
@@ -50,12 +52,12 @@ namespace Tram
 
         static std::optional<TramConfig> load()
         {
-            if (!std::filesystem::exists(s_ConfigFilename))
+            if (!std::filesystem::exists(s_ConfigFileName))
                 return {};
 
             try
             {
-                const auto config = toml::parse(s_ConfigFilename);
+                const auto config = toml::parse(s_ConfigFileName);
 
                 auto info = toml::find<ProjectInfo>(config, "project");
 
@@ -105,8 +107,6 @@ namespace Tram
         }
 
     private:
-        inline const static std::string s_ConfigFilename{"Tram.toml"};
-
         mutable ProjectInfo m_ProjectInfo;
 
         mutable StringVec m_Links;

@@ -1,12 +1,13 @@
 #pragma once
 
+#include "../config/config.hpp"
 #include "../util/strings.hpp"
 #include "../util/system.hpp"
-#include "../config/config.hpp"
 #include "../util/tram.hpp"
 
-#include <algorithm>
+#include <filesystem>
 #include <functional>
+#include <algorithm>
 #include <optional>
 #include <iostream>
 #include <vector>
@@ -72,7 +73,11 @@ namespace Tram
                     StringVec{"--branch", "--link"},
                     [](StringVec &&args)
                     {
+                        // Load config
+
                         // git add submodule libs/$dependency_name
+
+                        // saves to config
 
                         std::cout << "Adding dependency..." << std::endl;
                     });
@@ -84,7 +89,11 @@ namespace Tram
                     StringVec{},
                     [](StringVec &&args)
                     {
+                        // Load config
+
                         // git rm <dependency>
+
+                        // saves to config
 
                         std::cout << "Removing dependency..." << std::endl;
                     });
@@ -96,6 +105,10 @@ namespace Tram
                     StringVec{"debug", "release"},
                     [](StringVec &&args)
                     {
+                        // Load config
+
+                        // Build script
+
                         // premake5 (gmake2 vsXXXX xcode)
                         //  (make | msbuild | X)
 
@@ -109,6 +122,10 @@ namespace Tram
                     StringVec{"debug", "release", "--build"},
                     [](StringVec &&args)
                     {
+                        // Load config
+
+                        // Build script
+
                         //--build builds before runs the app
 
                         //./bin/(Debug | Release)/$project_name ...args
@@ -149,6 +166,12 @@ namespace Tram
 
             void projectWizard(StringVec &&args)
             {
+                if (std::filesystem::exists(Tram::TramConfig::s_ConfigFileName))
+                {
+                    std::cout << "A project already exists in this directory. Please remove the '" << Tram::TramConfig::s_ConfigFileName << "' file to create a new project." << std::endl;
+                    return;
+                }
+
                 std::cout << "Welcome to Tram project wizard!\n\n"
                           << std::endl;
 
