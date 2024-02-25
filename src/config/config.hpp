@@ -35,10 +35,7 @@ namespace Tram
         toml::value into_toml() const
         {
             return toml::value{
-                {"project", {
-                    {"cpp_version", static_cast<std::underlying_type<CppVersion>::type>(this->cpp_version)}, 
-                    {"kind", static_cast<std::underlying_type<ProjectKind>::type>(this->kind)}, 
-                    {"version", this->version}, {"name", this->project_name}}},
+                {"project", {{"cpp_version", static_cast<std::underlying_type<CppVersion>::type>(this->cpp_version)}, {"kind", static_cast<std::underlying_type<ProjectKind>::type>(this->kind)}, {"version", this->version}, {"name", this->project_name}}},
             };
         }
     };
