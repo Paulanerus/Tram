@@ -14,10 +14,7 @@ int main(int argc, char *argv[])
     const auto &config = Tram::TramConfig::load();
 
     if (!config.has_value())
-    {
-        std::cout << "Missing Tram.toml file! Please run tram new to create a new project." << std::endl;
         return EXIT_FAILURE;
-    }
 
     Tram::CLI::ArgParser parser;
     parser.handle(std::move(args), std::move(const_cast<Tram::TramConfig &>(config.value())));
