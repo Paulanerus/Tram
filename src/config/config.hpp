@@ -43,6 +43,11 @@ namespace Tram
     class TramConfig
     {
     public:
+        static TramConfig create(std::string &&project_name, ProjectKind &&kind, CppVersion &&cpp_version)
+        {
+            return TramConfig{ProjectInfo{std::move(project_name), "0.0.1", std::move(kind), std::move(cpp_version)}, {}, {}};
+        }
+
         static std::optional<TramConfig> load()
         {
             if (!std::filesystem::exists(s_ConfigFilename))
