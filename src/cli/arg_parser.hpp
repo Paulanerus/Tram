@@ -3,8 +3,9 @@
 #include "../util/strings.hpp"
 #include "../util/system.hpp"
 #include "../config/config.hpp"
+#include "../util/tram.hpp"
 
-#include <unordered_map>
+#include <algorithm>
 #include <functional>
 #include <optional>
 #include <iostream>
@@ -16,13 +17,22 @@ namespace Tram
     {
         struct Command
         {
+            const std::string identifier;
+
             const std::string description;
 
-            const std::vector<std::string> alternatives;
+            const StringVec alternatives;
 
-            const std::vector<std::string> allowed_args;
+            const StringVec allowed_args;
 
-            const std::function<void(std::vector<std::string> &&args, TramConfig &config)> function;
+            const std::function<void(StringVec &&args)> function;
+
+            Command(std::string &&identifier, std::string &&description, StringVec &&alternatives, StringVec &&allowed_args, std::function<void(StringVec &&args)> &&function)
+                : identifier(std::move(identifier)),
+                  description(std::move(description)),
+                  alternatives(std::move(alternatives)),
+                  allowed_args(std::move(allowed_args)),
+                  function(std::move(function)) {}
         };
 
         class ArgParser
@@ -30,82 +40,82 @@ namespace Tram
         public:
             ArgParser()
             {
-                auto help_cmd = Command{.description = "Shows help",
-                                        .alternatives = {"h"},
-                                        .allowed_args = {},
-                                        .function = [this](std::vector<std::string> &&args, TramConfig &config)
-                                        {
-                                            std::cout << "\n--------<Tram v2024.1.1>--------\n\n";
+                m_Commands.emplace_back(
+                    "help",
+                    "Shows help",
+                    StringVec{"h"},
+                    StringVec{},
+                    [this](StringVec &&args)
+                    {
+                        std::cout << "\n--------<" << Tram::TRAM_NAME << " " << Tram::TRAM_VERSION << ">--------\n\n";
 
-                                            for (auto &[id, cmd] : m_Commands)
-                                                std::cout << "\t" << id << " - " << cmd.description << "\n";
+                        for (auto &cmd : m_Commands)
+                            std::cout << "\t" << cmd.identifier << " - " << cmd.description << "\n";
 
-                                            std::cout << std::endl;
-                                        }};
+                        std::cout << std::endl;
+                    });
 
-                m_Commands.insert(std::make_pair("help", help_cmd));
+                m_Commands.emplace_back(
+                    "new",
+                    "Creates a new project",
+                    StringVec{"create", "c", "n"},
+                    StringVec{},
+                    [this](StringVec &&args)
+                    {
+                        projectWizard(std::move(args));
+                    });
 
-                auto new_cmd = Command{.description = "Creates a new  project",
-                                       .alternatives = {"create", "c", "n"},
-                                       .allowed_args = {""},
-                                       .function = [this](std::vector<std::string> &&args, TramConfig &config)
-                                       {
-                                           projectWizard(std::move(args));
-                                       }};
+                m_Commands.emplace_back(
+                    "add",
+                    "Adds a new dependency",
+                    StringVec{"a"},
+                    StringVec{"--branch", "--link"},
+                    [](StringVec &&args)
+                    {
+                        // git add submodule libs/$dependency_name
 
-                m_Commands.insert(std::make_pair("new", new_cmd));
+                        std::cout << "Adding dependency..." << std::endl;
+                    });
 
-                auto add_cmd = Command{.description = "Adds a new dependency",
-                                       .alternatives = {"a"},
-                                       .allowed_args = {"--branch", "--link"},
-                                       .function = [](std::vector<std::string> &&args, TramConfig &config)
-                                       {
-                                           // git add submodule libs/$dependency_name
+                m_Commands.emplace_back(
+                    "remove",
+                    "Removes a dependency",
+                    StringVec{"rm", "delete", "del"},
+                    StringVec{},
+                    [](StringVec &&args)
+                    {
+                        // git rm <dependency>
 
-                                           std::cout << "Adding dependency..." << std::endl;
-                                       }};
+                        std::cout << "Removing dependency..." << std::endl;
+                    });
 
-                m_Commands.insert(std::make_pair("add", add_cmd));
+                m_Commands.emplace_back(
+                    "build",
+                    "Builds the project",
+                    StringVec{"b"},
+                    StringVec{"debug", "release"},
+                    [](StringVec &&args)
+                    {
+                        // premake5 (gmake2 vsXXXX xcode)
+                        //  (make | msbuild | X)
 
-                auto remove_cmd = Command{.description = "Removes a dependency",
-                                          .alternatives = {"rm", "delete", "del"},
-                                          .allowed_args = {},
-                                          .function = [](std::vector<std::string> &&args, TramConfig &config)
-                                          {
-                                              // git rm <dependency>
+                        std::cout << "Building project..." << std::endl;
+                    });
 
-                                              std::cout << "Removing dependency..." << std::endl;
-                                          }};
+                m_Commands.emplace_back(
+                    "run",
+                    "Runs the project",
+                    StringVec{"r"},
+                    StringVec{"debug", "release", "--build"},
+                    [](StringVec &&args)
+                    {
+                        //--build builds before runs the app
 
-                m_Commands.insert(std::make_pair("remove", remove_cmd));
-
-                auto build_cmd = Command{.description = "Builds the project",
-                                         .alternatives = {"b"},
-                                         .allowed_args = {"debug", "release"},
-                                         .function = [](std::vector<std::string> &&args, TramConfig &config)
-                                         {
-                                             // premake5 (gmake2 vsXXXX xcode)
-                                             //  (make | msbuild | X)
-
-                                             std::cout << "Building project..." << std::endl;
-                                         }};
-
-                m_Commands.insert(std::make_pair("build", build_cmd));
-
-                auto run_cmd = Command{.description = "Runs the project",
-                                       .alternatives = {"b"},
-                                       .allowed_args = {"debug", "release", "--build"},
-                                       .function = [](std::vector<std::string> &&args, TramConfig &config)
-                                       {
-                                           //--build builds before runs the app
-
-                                           //./bin/(Debug | Release)/$project_name ...args
-                                       }};
-
-                m_Commands.insert(std::make_pair("run", run_cmd));
+                        //./bin/(Debug | Release)/$project_name ...args
+                    });
             }
 
-            void handle(std::vector<std::string> &&args, TramConfig &&config)
+            void handle(StringVec &&args)
             {
                 if (args.empty())
                 {
@@ -123,34 +133,40 @@ namespace Tram
 
                 args.erase(args.begin());
 
-                command.value().function(std::move(args), config);
-
-                config.save();
+                command.value().function(std::move(args));
             }
 
         private:
-            std::unordered_map<std::string, Command> m_Commands;
+            std::vector<Command> m_Commands;
 
             std::optional<Command> getCommandByIdentifier(const std::string &identifier)
             {
-                if (m_Commands.find(identifier) != m_Commands.end())
-                    return m_Commands[identifier];
+                auto direct = std::find_if(m_Commands.begin(), m_Commands.end(), [&identifier](const Command &cmd)
+                                           { return cmd.identifier == identifier || std::find(cmd.alternatives.begin(), cmd.alternatives.end(), identifier) != cmd.alternatives.end(); });
 
-                for (auto &[id, cmd] : m_Commands)
-                {
-                    for (auto &alt : cmd.alternatives)
-                    {
-                        if (alt == identifier)
-                            return cmd;
-                    }
-                }
-
-                return {};
+                return direct == m_Commands.end() ? std::nullopt : std::optional<Command>{*direct};
             }
 
-            void projectWizard(std::vector<std::string> &&args)
+            void projectWizard(StringVec &&args)
             {
-                std::cout << "Welcome to Tram project wizard!" << std::endl;
+                std::cout << "Welcome to Tram project wizard!\n\n"
+                          << std::endl;
+
+                // Project name
+
+                // Project kind
+
+                // Git init if not exists
+
+                // Sample files (.gitignore, License.md, README.md, main.cpp)
+
+                // Hint to run the project
+
+                // Creates config based on user input
+
+                const auto &config = Tram::TramConfig::create("MyProject", Tram::ProjectKind::APP, Tram::CppVersion::CPP_17);
+
+                config.save();
             }
         };
     }
