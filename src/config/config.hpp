@@ -75,9 +75,9 @@ namespace Tram
             return {};
         }
 
-        bool save() const
+        bool save(const std::filesystem::path &path = s_ConfigFileName) const
         {
-            std::ofstream file_out{"Tram.toml", std::ios::trunc};
+            std::ofstream file_out{path, std::ios::trunc};
 
             if (!file_out.is_open())
                 return false;
@@ -88,7 +88,7 @@ namespace Tram
 
             file_out << m_ProjectInfo.into_toml() << dependencies;
 
-            return true;
+            return file_out.good();
         }
 
         ProjectInfo &info()
