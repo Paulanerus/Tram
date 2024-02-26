@@ -1,7 +1,4 @@
 #include "cli/arg_parser.hpp"
-#include "config/config.hpp"
-
-#include <toml.hpp>
 
 int main(int argc, char *argv[])
 {
