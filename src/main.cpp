@@ -1,6 +1,13 @@
 #include <iostream>
 
-int main()
+#include <arg_parser.hpp>
+#include <toml.hpp>
+
+int main(int argc, char *argv[])
 {
-    std::cout << "Henlo Tram" << std::endl;
+    toml::color::enable();
+
+    psap::ArgParser parser{"tram"};
+
+    parser.parse(argv, argc);
 }

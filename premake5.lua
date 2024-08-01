@@ -11,6 +11,8 @@ project "Tram"
 
     warnings "Extra"
 
+    includedirs{"libs/toml11/include", "libs/ArgParser/include"}
+
     files {"src/**.hpp", "src/**.cpp"}
 
     filter "configurations:Debug"

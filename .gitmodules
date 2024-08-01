@@ -1,0 +1,6 @@
+[submodule "libs/toml11"]
+	path = libs/toml11
+	url = https://github.com/ToruNiina/toml11
+[submodule "libs/ArgParser"]
+	path = libs/ArgParser
+	url = https://github.com/Paulanerus/ArgParser
