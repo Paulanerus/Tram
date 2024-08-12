@@ -1,13 +1,15 @@
 #include <arg_parser.hpp>
-#include <toml.hpp>
 
 #include "commands.hpp"
+#include "config.hpp"
 
 int main(int argc, char *argv[])
 {
     toml::color::enable();
 
     psap::ArgParser parser{"tram"};
+
+    tram::load_config();
 
     parser.command("help", "h")
         .help("Displays help for a tram subcommand")
