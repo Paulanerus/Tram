@@ -1,4 +1,4 @@
-# Serenity C++ coding style
+# Tram C++ coding style
 **The coding style for Tram is nearly identical to the style guide used by the [Ladybird project](https://github.com/LadybirdBrowser/ladybird/tree/master).**
 
 This document describes the coding style used for C++ code in the Tram project. All new code should conform to this style.
