@@ -11,10 +11,12 @@ int main(int argc, char *argv[])
 
     parser.command("help", "h")
         .help("Displays help for a tram subcommand")
+        .fallback()
         .action(HELP_ACTION);
 
     parser.command("new", "n", "create", "c")
         .help("Creates a new project.")
+        .option(psap::Option::Flag({"--git", "-g"}, "Initializes a git repo."))
         .action(NEW_ACTION);
 
     parser.command("add", "a")

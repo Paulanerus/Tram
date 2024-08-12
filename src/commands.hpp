@@ -2,12 +2,24 @@
 
 #include <arg_parser.hpp>
 
+#include "project_wizard.hpp"
+
 inline auto HELP_ACTION = [](const psap::ArgParser &parser, [[maybe_unused]] const auto &_)
 {
     parser(parser[0]);
 };
 
-inline auto NEW_ACTION = []([[maybe_unused]] const auto &_parser, [[maybe_unused]] const auto &_cmd) {
+inline auto NEW_ACTION = [](const psap::ArgParser &parser, const psap::Command &cmd) noexcept
+{
+    auto project_name = parser[0];
+
+    if (project_name.empty())
+    {
+        std::cout << "Please specify a name!" << std::endl;
+        return;
+    }
+
+    tram::create_project(project_name, cmd["--git"]);
 };
 
 inline auto ADD_ACTION = []([[maybe_unused]] const auto &_parser, [[maybe_unused]] const auto &_cmd) {
