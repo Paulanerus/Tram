@@ -71,12 +71,55 @@ namespace tram
             }
         };
 
-        struct dependency
+        struct library
         {
-            std::string include_path;
+            std::string name;
+            std::string url;
             std::string branch;
-            bool compile;
-            bool link;
+            std::string include_files;
+            std::string src_files;
+            std::string kind;
+            std::vector<std::string> links;
+            std::vector<std::string> defines;
+
+            void from_toml(const toml::value &v)
+            {
+                this->url = toml::find_or(v, "url", "");
+                this->branch = toml::find_or(v, "branch", "master");
+                this->src_files = toml::find_or(v, "src_files", "");
+                this->include_files = toml::find_or(v, "include_files", "");
+                this->kind = toml::find_or(v, "kind", "Shared");
+
+                this->links = toml::find_or<std::vector<std::string>>(v, "links", {});
+                this->defines = toml::find_or<std::vector<std::string>>(v, "defines", {});
+            }
+        };
+
+        struct wo_comment_config
+        {
+            using comment_type = toml::discard_comments;
+
+            using boolean_type = bool;
+            using integer_type = std::int64_t;
+            using floating_type = double;
+            using string_type = std::string;
+
+            template <typename T>
+            using array_type = std::vector<T>;
+            template <typename K, typename T>
+            using table_type = std::unordered_map<K, T>;
+
+            static toml::result<integer_type, toml::error_info>
+            parse_int(const std::string &str, const toml::source_location src, const std::uint8_t base)
+            {
+                return toml::read_int<integer_type>(str, src, base);
+            }
+
+            static toml::result<floating_type, toml::error_info>
+            parse_float(const std::string &str, const toml::source_location src, const bool is_hex)
+            {
+                return toml::read_float<floating_type>(str, src, is_hex);
+            }
         };
 
         class config_loader
@@ -84,9 +127,9 @@ namespace tram
         public:
             config_loader() noexcept = default;
 
-            void load() noexcept
+            void load()
             {
-                const auto &parse_result = toml::try_parse("example.tram.toml");
+                const auto &parse_result = toml::try_parse<wo_comment_config>("example.tram.toml");
 
                 if (parse_result.is_err())
                     std::cout << parse_result.as_err()[0] << std::endl;
@@ -99,7 +142,18 @@ namespace tram
 
                     m_Build = toml::find<internal::build_conf>(result, "build");
 
-                    // TODO (paul) add dependency loading
+                    auto libs = toml::find_or(result, "libraries", toml::table{});
+
+                    for (const auto &[key, val] : libs)
+                    {
+                        if (!val.is_table())
+                            continue;
+
+                        auto lib = toml::get<internal::library>(val);
+                        lib.name = key;
+
+                        m_Libraries.emplace_back(std::move(lib));
+                    }
                 }
             }
 
@@ -113,9 +167,9 @@ namespace tram
                 return m_Build;
             }
 
-            const std::vector<internal::dependency> &dependencies() const noexcept
+            const std::vector<internal::library> &dependencies() const noexcept
             {
-                return m_Dependencies;
+                return m_Libraries;
             }
 
         private:
@@ -123,7 +177,7 @@ namespace tram
 
             build_conf m_Build;
 
-            std::vector<internal::dependency> m_Dependencies;
+            std::vector<internal::library> m_Libraries;
         };
     }
 
