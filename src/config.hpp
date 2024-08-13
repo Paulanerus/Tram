@@ -157,12 +157,12 @@ namespace tram
                 }
             }
 
-            settings_conf &settings() noexcept
+            const settings_conf &settings() const noexcept
             {
                 return m_Settings;
             }
 
-            build_conf &build() noexcept
+            const build_conf &build() const noexcept
             {
                 return m_Build;
             }
