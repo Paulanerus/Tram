@@ -84,11 +84,6 @@ namespace tram
         public:
             config_loader() noexcept = default;
 
-            ~config_loader() noexcept
-            {
-                save();
-            }
-
             void load() noexcept
             {
                 const auto &parse_result = toml::try_parse("example.tram.toml");
@@ -106,10 +101,6 @@ namespace tram
 
                     // TODO (paul) add dependency loading
                 }
-            }
-
-            void save() const noexcept
-            {
             }
 
             settings_conf &settings() noexcept
@@ -146,10 +137,5 @@ namespace tram
     inline void load_config() noexcept
     {
         config().load();
-    }
-
-    inline void save_config() noexcept
-    {
-        config().save();
     }
 }
