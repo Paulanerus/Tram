@@ -33,3 +33,8 @@ inline auto BUILD_ACTION = []([[maybe_unused]] const auto &_parser, [[maybe_unus
 
 inline auto RUN_ACTION = []([[maybe_unused]] const auto &_parser, [[maybe_unused]] const auto &_cmd) {
 };
+
+inline auto VERSION_ACTION = []([[maybe_unused]] const auto &_parser, [[maybe_unused]] const auto &_cmd)
+{
+    std::cout << "tram v2024.8.1-dp" << std::endl;
+};

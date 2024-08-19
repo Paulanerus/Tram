@@ -44,5 +44,9 @@ int main(int argc, char *argv[])
         .option(psap::Option::Flag({"--release", "-r"}, "Runs release build."))
         .action(RUN_ACTION);
 
+    parser.command("version", "v")
+        .help("Displays the current version.")
+        .action(VERSION_ACTION);
+
     parser.parse(argv, argc);
 }
