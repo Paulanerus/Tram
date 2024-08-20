@@ -36,7 +36,7 @@ namespace tram
             if (!ret)
                 return make_error(ErrorCode::MissingConfigFile, "The default tram config file is missing.");
 
-            ret = std::filesystem::create_directory(path, ec);
+            ret = std::filesystem::create_directories(path, ec);
 
             if (ec)
                 return make_systemerror(ec);
