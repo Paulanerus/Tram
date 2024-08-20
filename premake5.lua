@@ -13,7 +13,7 @@ project "Tram"
 
     includedirs{"libs/toml11/include", "libs/ArgParser/include"}
 
-    files {"src/**.hpp", "src/**.cpp"}
+    files {"src/**.cpp"}
 
     filter "configurations:Debug"
         defines { "DEBUG" }
