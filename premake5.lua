@@ -16,16 +16,18 @@ project "Tram"
     files {"src/**.hpp", "src/**.cpp"}
 
     filter "configurations:Debug"
-        filter "system:linux"
-            linkoptions{"-fuse-ld=mold"}
-
         defines { "DEBUG" }
         symbols "On"
 
-    filter "configurations:Release"
         filter "system:linux"
             linkoptions{"-fuse-ld=mold"}
-        
+
+
+    filter "configurations:Release"
         defines { "NDEBUG" }
         optimize "On"
         symbols "Off"
+        
+        filter "system:linux"
+            linkoptions{"-fuse-ld=mold"}
+        
