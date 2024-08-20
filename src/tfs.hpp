@@ -2,16 +2,20 @@
 
 #include "error.hpp"
 
+#include <unordered_set>
 #include <system_error>
 #include <string_view>
 #include <filesystem>
 #include <iostream>
 #include <fstream>
+#include <array>
 
 namespace tram
 {
     namespace fs
     {
+        inline constexpr std::array<std::string_view, 8> C_CPP_EXTENSIONS = {".c", ".C", ".cc", ".cpp", ".CPP", ".cp", ".c++", ".cxx"};
+
         inline constexpr std::string_view TRAM_TEMP = ".tram/";
 
         inline constexpr std::string_view TRAM_BUILD = ".tram/build/";
@@ -42,12 +46,48 @@ namespace tram
 
         inline TramError create_empty_file(const std::filesystem::path &path, bool override = false) noexcept
         {
-            std::ofstream file { path, override ? std::ios::trunc : std::ios::app};
+            std::ofstream file{path, override ? std::ios::trunc : std::ios::app};
 
             if (file.fail())
                 return make_error(ErrorCode::UnableToCreateFile, "Could not create file.");
 
             return NO_ERROR;
+        }
+
+        inline bool is_src_file(const std::filesystem::path &file_path)
+        {
+            if (!std::filesystem::is_regular_file(file_path))
+                return false;
+
+            for (auto &ext : C_CPP_EXTENSIONS)
+            {
+                if (file_path.extension() == ext)
+                    return true;
+            }
+
+            return false;
+        }
+
+        inline std::unordered_set<std::filesystem::path> collect_src_files(const std::vector<std::filesystem::path> &paths)
+        {
+            std::unordered_set<std::filesystem::path> src_files;
+
+            for (auto &path : paths)
+            {
+                if (std::filesystem::is_directory(path))
+                {
+                    for (auto &entry : std::filesystem::recursive_directory_iterator(path))
+                    {
+                        if (is_src_file(entry.path()))
+                            src_files.insert(entry.path());
+                    }
+                }
+
+                if (is_src_file(path))
+                    src_files.insert(path);
+            }
+
+            return src_files;
         }
     }
 }
