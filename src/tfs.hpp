@@ -68,7 +68,7 @@ namespace tram
             return false;
         }
 
-        inline std::unordered_set<std::filesystem::path> collect_src_files(const std::vector<std::filesystem::path> &paths)
+        inline std::unordered_set<std::filesystem::path> collect_src_files(const std::vector<std::string> &paths)
         {
             std::unordered_set<std::filesystem::path> src_files;
 
