@@ -41,8 +41,8 @@ namespace tram
                 arch
             */
 
-            std::string src_files;
-            std::string include_files;
+            std::vector<std::string> src_files;
+            std::vector<std::string> include_files;
 
             std::string filename;
 
@@ -53,8 +53,8 @@ namespace tram
             void from_toml(const toml::value &v)
             {
                 this->kind = toml::find_or(v, "kind", "App");
-                this->src_files = toml::find_or(v, "src_files", "");
-                this->include_files = toml::find_or(v, "include_files", "");
+                this->src_files = toml::find_or(v, "src_files", std::vector<std::string>{});
+                this->include_files = toml::find_or(v, "include_files", std::vector<std::string>{});
                 this->filename = toml::find_or(v, "filename", "");
                 this->warning = toml::find_or(v, "warning", "");
 
