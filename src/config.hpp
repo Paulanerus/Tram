@@ -172,7 +172,7 @@ namespace tram
                 return m_Build.configurations;
             }
 
-            const std::vector<internal::library> &dependencies() const noexcept
+            const std::vector<internal::library> &libraries() const noexcept
             {
                 return m_Libraries;
             }
