@@ -7,7 +7,8 @@ int main(int argc, char *argv[])
 {
     toml::color::enable();
 
-    psap::ArgParser parser{"tram"};
+    psap::ArgParser parser{
+        psap::ParserConf{.name = "tram"}};
 
     tram::load_config();
 
