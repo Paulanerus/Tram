@@ -5,3 +5,6 @@ build/
 
 Makefile
 *.sln
+
+.cache/
+compile_commands.json
