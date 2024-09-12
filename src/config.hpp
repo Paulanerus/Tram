@@ -41,21 +41,21 @@ namespace tram
                 arch
             */
 
-            std::vector<std::string> src_files;
-            std::vector<std::string> include_files;
+            std::vector<std::string> src_files{};
+            std::vector<std::string> include_files{};
 
             std::string filename;
 
-            std::string warning;
+            std::string warning{};
 
-            std::vector<build_filter_conf> configurations;
+            std::vector<build_filter_conf> configurations{};
 
             void from_toml(const toml::value &v)
             {
                 this->kind = toml::find_or(v, "kind", "App");
                 this->src_files = toml::find_or(v, "src_files", std::vector<std::string>{});
                 this->include_files = toml::find_or(v, "include_files", std::vector<std::string>{});
-                this->filename = toml::find_or(v, "filename", "");
+                this->filename = toml::find_or(v, "filename", "my_app");
                 this->warning = toml::find_or(v, "warning", "");
 
                 for (const auto &[key, value] : v.as_table())
@@ -140,7 +140,7 @@ namespace tram
                     m_Settings.name = toml::find_or<std::string>(result, "name", "dummy");
                     m_Settings.version = toml::find_or<std::string>(result, "version", "0.0.1");
 
-                    m_Build = toml::find<internal::build_conf>(result, "build");
+                    m_Build = toml::find_or<internal::build_conf>(result, "build", internal::build_conf{.kind = "App", .filename = "my_app"});
 
                     auto libs = toml::find_or(result, "libraries", toml::table{});
 
