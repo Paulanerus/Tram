@@ -1,0 +1,45 @@
+name = "Tram"
+version = "2024.6.1"
+
+[build]
+kind = "App"
+cpp = "C++20" # -> lang = "C<Ver>" or "C++<Ver>"
+arch = "x64"
+
+src_files = ["src/"]
+include_files = ["include/"]
+
+filename = "$name"     # $version $buildtype $arch $date
+out = "bin/$buildtype"
+
+warning = "Extra"
+
+[build.debug]
+defines = ["DEBUG"]
+symbols = true
+
+
+[build.release]
+defines = ["NDEBUG"]
+symbols = false
+optimize = true
+
+
+[libraries.toml11]
+url = "github@ToruNiina/toml11"
+branch = "dev"
+include_files = "include/"
+lang = "C++20"                  # TODO
+
+[libraries.lib-compile]
+url = "gitlab@test"
+kind = "Shared"            # TODO
+include_files = "include/"
+src_files = "src/"
+links = ["fmt", "openssl"]
+defines = ["TEST"]
+
+[libraries.local]
+url = "fmt" # is treated as "system@"   
+
+include_files = "include/"

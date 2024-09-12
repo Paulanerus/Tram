@@ -129,7 +129,7 @@ namespace tram
 
             void load()
             {
-                const auto &parse_result = toml::try_parse<wo_comment_config>("example.tram.toml");
+                const auto &parse_result = toml::try_parse<wo_comment_config>("example/tram.toml");
 
                 if (parse_result.is_err())
                     std::cout << parse_result.as_err()[0] << std::endl;
