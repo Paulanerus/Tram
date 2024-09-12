@@ -11,7 +11,7 @@ project "Tram"
 
     warnings "Extra"
 
-    includedirs{"libs/toml11/include", "libs/ArgParser/include"}
+    includedirs{"include", "libs/toml11/include", "libs/ArgParser/include"}
 
     files {"src/**.cpp"}
 
