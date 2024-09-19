@@ -1,17 +1,15 @@
 #pragma once
 
-#include <string_view>
 #include <cstdlib>
+#include <string_view>
 
-namespace tram
-{
-    namespace util
+namespace tram {
+namespace util {
+    inline int system_call(std::string_view command) noexcept
     {
-        inline int system_call(std::string_view command) noexcept
-        {
-            int status_code = std::system(command.data());
+        int status_code = std::system(command.data());
 
-            return status_code;
-        }
+        return status_code;
     }
+}
 }

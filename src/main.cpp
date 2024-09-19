@@ -3,12 +3,13 @@
 #include "commands.hpp"
 #include "config.hpp"
 
-int main(int argc, char *argv[])
+int main(int argc, char* argv[])
 {
     toml::color::enable();
 
-    psap::ArgParser parser{
-        psap::ParserConf{.name = "tram"}};
+    psap::ArgParser parser {
+        psap::ParserConf { .name = "tram" }
+    };
 
     tram::load_config();
 
@@ -19,14 +20,14 @@ int main(int argc, char *argv[])
 
     parser.command("new", "n", "create", "c")
         .help("Creates a new project.")
-        .option(psap::Option::Flag({"--git", "-g"}, "Initializes a git repo."))
-        .option(psap::Option::Flag({"--sample", "-s"}, "Create sample files like README.md, LICENSE.md, etc."))
+        .option(psap::Option::Flag({ "--git", "-g" }, "Initializes a git repo."))
+        .option(psap::Option::Flag({ "--sample", "-s" }, "Create sample files like README.md, LICENSE.md, etc."))
         .action(NEW_ACTION);
 
     parser.command("add", "a")
         .help("Adds a new dependency.")
-        .option(psap::Option::Value({"--branch", "-b"}, "Select a specific branch."))
-        .option(psap::Option::Flag({"--link", "-l"}, "Links the specified library."))
+        .option(psap::Option::Value({ "--branch", "-b" }, "Select a specific branch."))
+        .option(psap::Option::Flag({ "--link", "-l" }, "Links the specified library."))
         .action(ADD_ACTION);
 
     parser.command("remove", "rm", "delete", "del")
@@ -35,14 +36,14 @@ int main(int argc, char *argv[])
 
     parser.command("build", "b")
         .help("Builds the project.")
-        .option(psap::Option::Flag({"--debug", "-d"}, "Runs debug build."))
-        .option(psap::Option::Flag({"--release", "-r"}, "Runs release build."))
+        .option(psap::Option::Flag({ "--debug", "-d" }, "Runs debug build."))
+        .option(psap::Option::Flag({ "--release", "-r" }, "Runs release build."))
         .action(BUILD_ACTION);
 
     parser.command("run", "r")
         .help("Executes the project and perform a build, if needed.")
-        .option(psap::Option::Flag({"--debug", "-d"}, "Runs debug build."))
-        .option(psap::Option::Flag({"--release", "-r"}, "Runs release build."))
+        .option(psap::Option::Flag({ "--debug", "-d" }, "Runs debug build."))
+        .option(psap::Option::Flag({ "--release", "-r" }, "Runs release build."))
         .action(RUN_ACTION);
 
     parser.command("version", "v")
