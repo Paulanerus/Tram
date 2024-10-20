@@ -50,5 +50,9 @@ int main(int argc, char* argv[])
         .help("Displays the current version.")
         .action(VERSION_ACTION);
 
+    parser.command("license")
+        .help("Print dependency licenses.")
+        .action(LICENCE_ACTION);
+
     parser.parse(argv, argc);
 }
