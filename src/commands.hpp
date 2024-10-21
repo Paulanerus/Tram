@@ -3,9 +3,9 @@
 #include <arg_parser.hpp>
 #include <toml.hpp>
 
-#include "project_wizard.hpp"
-
 #include <iostream>
+
+namespace tram {
 
 inline auto HELP_ACTION = [](const psap::ArgParser& parser, [[maybe_unused]] const auto& _) {
     parser(parser[0]);
@@ -18,8 +18,6 @@ inline auto NEW_ACTION = [](const psap::ArgParser& parser, const psap::Command& 
         std::cout << "Please specify a name!" << std::endl;
         return;
     }
-
-    tram::create_project(project_name, cmd["--git"]);
 };
 
 inline auto ADD_ACTION = []([[maybe_unused]] const auto& _parser, [[maybe_unused]] const auto& _cmd) {
@@ -49,3 +47,4 @@ inline auto LICENCE_ACTION = []([[maybe_unused]] const auto& _parser, [[maybe_un
                toml::license_notice())
         << std::endl;
 };
+}
