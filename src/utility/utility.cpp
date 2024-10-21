@@ -1,27 +1,17 @@
-#pragma once
-
-#include "error.hpp"
-
-#include <array>
-#include <filesystem>
-#include <fstream>
-#include <iostream>
-#include <string_view>
-#include <system_error>
-#include <unordered_set>
-#include <vector>
+#include "utility.hpp"
 
 namespace tram {
+namespace system {
+    int call(std::string_view command)
+    {
+        int status_code = std::system(command.data());
+
+        return status_code;
+    }
+}
+
 namespace fs {
-    inline constexpr std::array<std::string_view, 8> C_CPP_EXTENSIONS = { ".c", ".C", ".cc", ".cpp", ".CPP", ".cp", ".c++", ".cxx" };
-
-    inline constexpr std::string_view TRAM_TEMP = ".tram/";
-
-    inline constexpr std::string_view TRAM_BUILD = ".tram/build/";
-
-    inline constexpr std::string_view TRAM_PROJECT_FILE = "tram.toml";
-
-    inline TramError create_dir_if_notexists(const std::filesystem::path& path) noexcept
+    TramError create_dir_if_notexists(const std::filesystem::path& path) noexcept
     {
         std::error_code ec;
 
@@ -43,7 +33,7 @@ namespace fs {
         return ret ? NO_ERROR : make_error(ErrorCode::DirAlreadyExists, "Directory already exists.");
     }
 
-    inline TramError create_empty_file(const std::filesystem::path& path, bool override = false) noexcept
+    TramError create_empty_file(const std::filesystem::path& path, bool override = false) noexcept
     {
         std::ofstream file { path, override ? std::ios::trunc : std::ios::app };
 
@@ -53,7 +43,7 @@ namespace fs {
         return NO_ERROR;
     }
 
-    inline bool is_src_file(const std::filesystem::path& file_path)
+    bool is_src_file(const std::filesystem::path& file_path)
     {
         if (!std::filesystem::is_regular_file(file_path))
             return false;
@@ -66,7 +56,7 @@ namespace fs {
         return false;
     }
 
-    inline std::unordered_set<std::filesystem::path> collect_src_files(const std::vector<std::string>& paths)
+    std::unordered_set<std::filesystem::path> collect_src_files(const std::vector<std::string>& paths)
     {
         std::unordered_set<std::filesystem::path> src_files;
 
