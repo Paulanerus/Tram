@@ -1,4 +1,5 @@
-.vscode/ 
+.vscode/
+.zed/
 
 bin/
 build/
@@ -8,3 +9,4 @@ Makefile
 
 .cache/
 compile_commands.json
+compile_flags.txt
