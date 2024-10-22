@@ -50,8 +50,6 @@ public:
 
     operator bool() const noexcept
     {
-        std::cout << std::boolalpha << (!is_none()) << std::endl;
-
         return !is_none();
     }
 
