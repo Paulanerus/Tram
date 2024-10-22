@@ -11,7 +11,7 @@ inline auto HELP_ACTION = [](const psap::ArgParser& parser, [[maybe_unused]] con
     parser(parser[0]);
 };
 
-inline auto NEW_ACTION = [](const psap::ArgParser& parser, const psap::Command& cmd) noexcept {
+inline auto NEW_ACTION = [](const psap::ArgParser& parser, [[maybe_unused]] const psap::Command& cmd) noexcept {
     auto project_name = parser[0];
 
     if (project_name.empty()) {
