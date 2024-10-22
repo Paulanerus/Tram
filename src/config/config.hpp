@@ -116,7 +116,15 @@ namespace internal {
     };
 }
 
-internal::config_loader& config();
+inline internal::config_loader& config()
+{
+    static internal::config_loader config;
 
-void load_config() noexcept;
+    return config;
+}
+
+inline void load_config() noexcept
+{
+    config().load();
+}
 }

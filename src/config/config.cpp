@@ -70,17 +70,5 @@ namespace internal {
             }
         }
     }
-
-    internal::config_loader& config()
-    {
-        static internal::config_loader config;
-
-        return config;
-    }
-
-    inline void load_config() noexcept
-    {
-        config().load();
-    }
 }
 }
