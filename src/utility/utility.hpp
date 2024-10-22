@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../error.hpp"
+#include "../error/error.hpp"
 
 #include <array>
 #include <cstdlib>
