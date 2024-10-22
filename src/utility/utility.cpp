@@ -1,8 +1,11 @@
 #include "utility.hpp"
+#include <fstream>
+#include <iostream>
+#include <system_error>
 
 namespace tram {
 namespace system {
-    int call(std::string_view command)
+    int call(std::string_view command) noexcept
     {
         int status_code = std::system(command.data());
 
@@ -33,7 +36,7 @@ namespace fs {
         return ret ? NO_ERROR : make_error(ErrorCode::DirAlreadyExists, "Directory already exists.");
     }
 
-    TramError create_empty_file(const std::filesystem::path& path, bool override = false) noexcept
+    TramError create_empty_file(const std::filesystem::path& path, bool override) noexcept
     {
         std::ofstream file { path, override ? std::ios::trunc : std::ios::app };
 
