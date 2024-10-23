@@ -14,6 +14,10 @@ namespace system {
     int call(std::string_view command) noexcept;
 }
 
+namespace string {
+    std::string normalize_filename(std::string filename);
+}
+
 namespace fs {
 
     struct SampleFile {

@@ -1,4 +1,6 @@
 #include "utility.hpp"
+
+#include <algorithm>
 #include <fstream>
 #include <iostream>
 #include <system_error>
@@ -12,6 +14,15 @@ namespace system {
         return status_code;
     }
 }
+
+namespace string {
+    std::string normalize_filename(std::string filename)
+    {
+        std::replace(filename.begin(), filename.end(), ' ', '_');
+        
+        return filename;
+    }
+};
 
 namespace fs {
     TramError create_dir_if_notexists(const std::filesystem::path& path) noexcept
