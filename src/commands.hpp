@@ -17,7 +17,7 @@ inline auto HELP_ACTION = [](const psap::ArgParser& parser, [[maybe_unused]] con
 };
 
 inline auto NEW_ACTION = [](const psap::ArgParser& parser, const psap::Command& cmd) noexcept {
-    std::filesystem::path project_name { parser[0] };
+    std::filesystem::path project_name { tram::string::normalize_filename(parser[0]) };
 
     if (project_name.empty()) {
         std::cout << "Please specify a name!" << std::endl;
