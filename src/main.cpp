@@ -37,13 +37,11 @@ int main(int argc, char* argv[])
 
     parser.command("build", "b")
         .help("Builds the project.")
-        .option(psap::make_flag("--debug", "-d", "Runs debug build."))
-        .option(psap::make_flag("--release", "-r", "Runs release build."))
+        .option(psap::make_flag("--release", "-r", "Builds release build."))
         .action(tram::BUILD_ACTION);
 
     parser.command("run", "r")
         .help("Executes the project and perform a build, if needed.")
-        .option(psap::make_flag("--debug", "-d", "Runs debug build."))
         .option(psap::make_flag("--release", "-r", "Runs release build."))
         .action(tram::RUN_ACTION);
 
