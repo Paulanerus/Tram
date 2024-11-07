@@ -3,7 +3,9 @@
 #include <arg_parser.hpp>
 #include <toml.hpp>
 
+#include "config/config.hpp"
 #include "error/error.hpp"
+#include "gen/make/gen_makefile.hpp"
 #include "utility/utility.hpp"
 
 #include <filesystem>
@@ -47,7 +49,18 @@ inline auto ADD_ACTION = []([[maybe_unused]] const auto& _parser, [[maybe_unused
 inline auto REMOVE_ACTION = []([[maybe_unused]] const auto& _parser, [[maybe_unused]] const auto& _cmd) {
 };
 
-inline auto BUILD_ACTION = []([[maybe_unused]] const auto& _parser, [[maybe_unused]] const auto& _cmd) {
+inline auto BUILD_ACTION = []([[maybe_unused]] const auto& _parser, const psap::Command& cmd) {
+    if (auto err = gen::create_make_file()) {
+        err.report();
+        return;
+    }
+
+    std::filesystem::path temp_dir { fs::TRAM_TEMP };
+
+    if (!std::filesystem::exists(temp_dir / "Makefile"))
+        std::cout << "No Makfile was found in " << (temp_dir / "Makefile") << std::endl;
+
+    system::call(std::format("make -f {}/Makefile config=", fs::TRAM_TEMP, cmd["--release"] ? "release" : "debug"));
 };
 
 inline auto RUN_ACTION = []([[maybe_unused]] const auto& _parser, [[maybe_unused]] const auto& _cmd) {
