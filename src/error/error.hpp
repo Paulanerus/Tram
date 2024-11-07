@@ -13,6 +13,7 @@ enum class ErrorCode {
     MissingConfigFile,
     DirAlreadyExists,
     UnableToCreateFile,
+    UnableToCreateMakefile,
 };
 
 class TramError {
@@ -82,6 +83,8 @@ private:
             return "UnableToCreateFile";
         case ErrorCode::DirAlreadyExists:
             return "DirAlreadyExists";
+        case ErrorCode::UnableToCreateMakefile:
+            return "UnableToCreateMakefile";
         default:
             return "None";
         }
