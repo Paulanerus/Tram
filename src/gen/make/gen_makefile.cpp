@@ -20,10 +20,8 @@ namespace gen {
         const auto& settings = conf.settings();
         const auto& build_conf = conf.build();
 
-        if (auto err = tram::fs::create_dir_if_notexists(tram::fs::TRAM_TEMP); !err.is(ErrorCode::DirAlreadyExists)) {
-            err.report();
+        if (auto err = tram::fs::create_dir_if_notexists(tram::fs::TRAM_TEMP); !err.is(ErrorCode::DirAlreadyExists))
             return err;
-        }
 
         std::filesystem::path makefile_path { tram::fs::TRAM_TEMP };
 
