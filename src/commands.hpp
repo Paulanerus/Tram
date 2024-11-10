@@ -1,7 +1,6 @@
 #pragma once
 
 #include <arg_parser.hpp>
-#include <ios>
 #include <toml.hpp>
 
 #include "config/config.hpp"
@@ -36,7 +35,7 @@ inline auto NEW_ACTION = [](const psap::ArgParser& parser, const psap::Command& 
         return;
     }
 
-    fs::create_file(project_name / fs::TRAM_PROJECT_FILE, std::format("name = \"{}\"\n", parser[0]));
+    fs::create_file(project_name / fs::TRAM_PROJECT_FILE, std::format("name = \"{}\"\n{}", parser[0], cmd["--sample"] ? "\n[build]\nsrc_files = [\"src/\"]\n" : ""));
 
     if (cmd["--sample"])
         fs::create_sample_files(project_name);
@@ -45,12 +44,16 @@ inline auto NEW_ACTION = [](const psap::ArgParser& parser, const psap::Command& 
 };
 
 inline auto ADD_ACTION = []([[maybe_unused]] const auto& _parser, [[maybe_unused]] const auto& _cmd) {
+    tram::load_config();
 };
 
 inline auto REMOVE_ACTION = []([[maybe_unused]] const auto& _parser, [[maybe_unused]] const auto& _cmd) {
+    tram::load_config();
 };
 
 inline auto BUILD_ACTION = []([[maybe_unused]] const auto& _parser, const psap::Command& cmd) {
+    tram::load_config();
+
     if (fs::compare_modified_time_from_file(fs::last_modified_time(fs::TRAM_PROJECT_FILE))) {
 
         if (auto err = gen::create_make_file()) {
@@ -68,6 +71,7 @@ inline auto BUILD_ACTION = []([[maybe_unused]] const auto& _parser, const psap::
 };
 
 inline auto RUN_ACTION = []([[maybe_unused]] const auto& _parser, [[maybe_unused]] const auto& _cmd) {
+    tram::load_config();
 };
 
 inline auto VERSION_ACTION = []([[maybe_unused]] const auto& _parser, [[maybe_unused]] const auto& _cmd) {

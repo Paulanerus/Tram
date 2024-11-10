@@ -2,7 +2,6 @@
 #include <toml.hpp>
 
 #include "commands.hpp"
-#include "config/config.hpp"
 
 int main(int argc, char* argv[])
 {
@@ -11,8 +10,6 @@ int main(int argc, char* argv[])
     psap::ArgParser parser {
         psap::ParserConf { .name = "tram", .unknown_option_policy = psap::UnknownOptionPolicy::ReportRemove }
     };
-
-    tram::load_config();
 
     parser.command("help", "h")
         .help("Displays help for a tram subcommand.")
