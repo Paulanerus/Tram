@@ -1,5 +1,7 @@
 #include "config.hpp"
 
+#include "../utility/utility.hpp"
+
 #include <iostream>
 
 namespace tram {
@@ -45,7 +47,7 @@ namespace internal {
 
     void config_loader::load()
     {
-        const auto& parse_result = toml::try_parse<wo_comment_config>("example/tram.toml");
+        const auto& parse_result = toml::try_parse<wo_comment_config>(fs::TRAM_PROJECT_FILE.data());
 
         if (parse_result.is_err())
             std::cout << parse_result.as_err()[0] << std::endl;
