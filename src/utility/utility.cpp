@@ -1,8 +1,12 @@
 #include "utility.hpp"
 
 #include <algorithm>
+#include <exception>
+#include <filesystem>
 #include <fstream>
+#include <ios>
 #include <iostream>
+#include <string>
 #include <system_error>
 
 namespace tram {
@@ -19,7 +23,7 @@ namespace string {
     std::string normalize_filename(std::string filename)
     {
         std::replace(filename.begin(), filename.end(), ' ', '_');
-        
+
         return filename;
     }
 };
@@ -93,6 +97,39 @@ namespace fs {
                 if (auto err = fs::create_file(path / file.path, file.content))
                     err.report();
             }
+        }
+    }
+
+    std::size_t last_modified_time(const std::filesystem::path& path) noexcept
+    {
+        std::error_code ec;
+
+        auto time = std::filesystem::last_write_time(path, ec);
+
+        return ec ? 0 : time.time_since_epoch().count();
+    }
+
+    bool compare_modified_time_from_file(std::size_t time)
+    {
+        std::ifstream file_in { TRAM_LAST_MODIFIED_FILE.data() };
+
+        if (!file_in.is_open())
+            return true;
+
+        std::string line;
+        if (!std::getline(file_in, line))
+            return true;
+
+        if (line.empty())
+            return true;
+
+        try {
+
+            auto num = std::stoull(line);
+
+            return num != time;
+        } catch (std::exception& ignored) {
+            return true;
         }
     }
 }

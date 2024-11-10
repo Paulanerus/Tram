@@ -30,9 +30,11 @@ namespace fs {
 
     inline constexpr std::array<SampleFile, 5> SAMPLE_FILES = { SampleFile { ".gitignore", ".tram/" }, { "src/" }, { "src/main.cpp" }, { "README.md" }, { "LICENSE.md" } };
 
-    inline constexpr std::string_view TRAM_TEMP = ".tram/";
+    inline constexpr std::string_view TRAM_TEMP = ".tram";
 
-    inline constexpr std::string_view TRAM_BUILD = ".tram/build/";
+    inline constexpr std::string_view TRAM_BUILD = ".tram/build";
+
+    inline constexpr std::string_view TRAM_LAST_MODIFIED_FILE = ".tram/last_build_file";
 
     inline constexpr std::string_view TRAM_PROJECT_FILE = "tram.toml";
 
@@ -45,5 +47,9 @@ namespace fs {
     std::unordered_set<std::filesystem::path> collect_src_files(const std::vector<std::string>& paths);
 
     void create_sample_files(const std::filesystem::path& path) noexcept;
+
+    std::size_t last_modified_time(const std::filesystem::path& path) noexcept;
+
+    bool compare_modified_time_from_file(std::size_t time);
 }
 }

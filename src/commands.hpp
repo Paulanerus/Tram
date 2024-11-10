@@ -1,6 +1,7 @@
 #pragma once
 
 #include <arg_parser.hpp>
+#include <ios>
 #include <toml.hpp>
 
 #include "config/config.hpp"
@@ -50,9 +51,12 @@ inline auto REMOVE_ACTION = []([[maybe_unused]] const auto& _parser, [[maybe_unu
 };
 
 inline auto BUILD_ACTION = []([[maybe_unused]] const auto& _parser, const psap::Command& cmd) {
-    if (auto err = gen::create_make_file()) {
-        err.report();
-        return;
+    if (fs::compare_modified_time_from_file(fs::last_modified_time(fs::TRAM_PROJECT_FILE))) {
+
+        if (auto err = gen::create_make_file()) {
+            err.report();
+            return;
+        }
     }
 
     std::filesystem::path temp_dir { fs::TRAM_TEMP };
