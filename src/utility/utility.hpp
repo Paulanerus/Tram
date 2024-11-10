@@ -28,7 +28,7 @@ namespace fs {
 
     inline constexpr std::array<std::string_view, 8> C_CPP_EXTENSIONS = { ".c", ".C", ".cc", ".cpp", ".CPP", ".cp", ".c++", ".cxx" };
 
-    inline constexpr std::array<SampleFile, 5> SAMPLE_FILES = { SampleFile { ".gitignore", ".tram/" }, { "src/" }, { "src/main.cpp" }, { "README.md" }, { "LICENSE.md" } };
+    inline constexpr std::array<SampleFile, 5> SAMPLE_FILES = { SampleFile { ".gitignore", ".tram/" }, { "src/" }, { "src/main.cpp", "int main(){}" }, { "README.md" }, { "LICENSE.md" } };
 
     inline constexpr std::string_view TRAM_TEMP = ".tram";
 
