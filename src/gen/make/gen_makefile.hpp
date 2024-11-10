@@ -4,8 +4,8 @@
 #include "../../error/error.hpp"
 
 #include <fstream>
-#include <vector>
 #include <string_view>
+#include <vector>
 
 namespace tram {
 namespace gen {
@@ -15,6 +15,8 @@ namespace gen {
         void make_variable(std::ofstream& file_out, std::string_view var_name, std::string value, bool indent = false) noexcept;
 
         void make_config(std::ofstream& file_out, const std::vector<tram::internal::build_filter_conf>& configs) noexcept;
+
+        TramError write_filetime() noexcept;
     }
 }
 }

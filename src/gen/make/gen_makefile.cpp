@@ -20,12 +20,12 @@ namespace gen {
         const auto& settings = conf.settings();
         const auto& build_conf = conf.build();
 
-        if (auto err = tram::fs::create_dir_if_notexists(tram::fs::TRAM_TEMP); !err.is(ErrorCode::DirAlreadyExists))
+        if (auto err = tram::fs::create_dir_if_notexists(tram::fs::TRAM_TEMP); err && !err.is(ErrorCode::DirAlreadyExists))
             return err;
 
-        std::filesystem::path makefile_path { tram::fs::TRAM_TEMP };
+        std::filesystem::path temp_dir { tram::fs::TRAM_TEMP };
 
-        std::ofstream file_out { makefile_path / "Makefile", std::ios::trunc };
+        std::ofstream file_out { temp_dir / "Makefile", std::ios::trunc };
 
         if (!file_out.is_open())
             return make_error(ErrorCode::UnableToCreateMakefile);
@@ -53,7 +53,7 @@ namespace gen {
 
         file_out << "\n";
 
-        internal::make_variable(file_out, "OBJ_DIR", std::format("{}$(NAME)/$(config)/obj", tram::fs::TRAM_BUILD));
+        internal::make_variable(file_out, "OBJ_DIR", std::format("{}/$(NAME)/$(config)/obj", tram::fs::TRAM_BUILD));
         internal::make_variable(file_out, "OBJ_FILES", "$(foreach src,$(SRC_FILES),$(OBJ_DIR)/$(notdir $(src:.cpp=.o)))");
 
         file_out << "INCLUDE_PATHS := ";
@@ -95,7 +95,7 @@ namespace gen {
 
         file_out << ".PHONY: all";
 
-        return tram::NO_ERROR;
+        return internal::write_filetime();
     }
 
     namespace internal {
@@ -127,6 +127,18 @@ namespace gen {
             }
 
             file_out << "endif\n\n";
+        }
+
+        TramError write_filetime() noexcept
+        {
+            std::ofstream file_out { fs::TRAM_LAST_MODIFIED_FILE.data(), std::ios::trunc };
+
+            if (!file_out.is_open())
+                return make_error(ErrorCode::UnableToCreateFile, "test file could not be created.");
+
+            file_out << fs::last_modified_time(fs::TRAM_PROJECT_FILE);
+
+            return NO_ERROR;
         }
     }
 }
