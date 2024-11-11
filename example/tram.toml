@@ -14,6 +14,8 @@ out = "bin/$buildtype"
 
 warning = "Extra"
 
+toolset = "clang"
+
 [build.debug]
 defines = ["DEBUG"]
 symbols = true
@@ -40,6 +42,6 @@ links = ["fmt", "openssl"]
 defines = ["TEST"]
 
 [libraries.local]
-url = "fmt" # is treated as "system@"   
+url = "fmt" # is treated as "system@"
 
 include_files = "include/"

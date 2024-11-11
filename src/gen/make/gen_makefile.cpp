@@ -38,7 +38,7 @@ namespace gen {
 
         file_out << "\n";
 
-        internal::make_variable(file_out, "CXX", "g++");
+        internal::make_variable(file_out, "CXX", internal::resolve_toolset(build_conf.lang, build_conf.toolset));
         internal::make_variable(file_out, "LANG_STD", std::format("-std={}", internal::validate_lang(build_conf.lang)));
         internal::make_variable(file_out, "ARCH", std::format("-m{}", build_conf.arch));
 
@@ -143,23 +143,29 @@ namespace gen {
 
         std::string validate_lang(std::string lang)
         {
-            psap::string::convert_str_to_lower(lang);
-
             if (!lang.starts_with("c"))
                 return "c++11";
 
             return lang;
         }
 
-        std::string translate_warning_to_flags(std::string_view warning)
+        std::string translate_warning_to_flags(std::string_view warning) noexcept
         {
-            if (warning == "off" || warning == "Off")
+            if (warning == "off")
                 return "-w";
 
-            if (warning == "extra" || warning == "Extra")
+            if (warning == "extra")
                 return "-Wall -Wextra";
 
             return "";
+        }
+
+        std::string resolve_toolset(std::string_view lang, const std::string& toolset) noexcept
+        {
+            if (toolset == "gcc")
+                return lang.starts_with("c++") ? "g++" : "gcc";
+
+            return toolset;
         }
     }
 }

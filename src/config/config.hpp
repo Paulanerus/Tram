@@ -31,16 +31,19 @@ namespace internal {
         std::vector<std::string> include_files {};
         std::string filename;
         std::string warning;
+        std::string toolset;
         std::vector<build_filter_conf> configurations {};
 
         void from_toml(const toml::value& v);
     };
 
-    inline constexpr std::array<std::string_view, 3> ALLOWED_KIND_VALUES = { "App", "Shared", "Static" };
+    inline constexpr std::array<std::string_view, 3> ALLOWED_KIND_VALUES = { "app", "shared", "static" };
 
     inline constexpr std::array<std::string_view, 2> ALLOWED_ARCH_VALUES = { "32", "64" };
 
-    inline constexpr std::array<std::string_view, 3> ALLOWED_WARNING_VALUES = { "Off", "Default", "Extra" };
+    inline constexpr std::array<std::string_view, 3> ALLOWED_WARNING_VALUES = { "off", "default", "extra" };
+
+    inline constexpr std::array<std::string_view, 2> ALLOWED_TOOLSET_VALUES = { "gcc", "clang" };
 
     struct library {
         std::string name;

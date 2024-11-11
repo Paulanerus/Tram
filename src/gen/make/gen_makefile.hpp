@@ -20,7 +20,9 @@ namespace gen {
 
         std::string validate_lang(std::string lang);
 
-        std::string translate_warning_to_flags(std::string_view warning);
+        std::string translate_warning_to_flags(std::string_view warning) noexcept;
+
+        std::string resolve_toolset(std::string_view lang, const std::string& toolset) noexcept;
     }
 }
 }
