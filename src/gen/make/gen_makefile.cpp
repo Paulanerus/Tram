@@ -53,7 +53,7 @@ namespace gen {
 
         file_out << "\n";
 
-        internal::make_variable(file_out, "OBJ_DIR", std::format("{}/$(NAME)/$(config)/obj", tram::fs::TRAM_BUILD));
+        internal::make_variable(file_out, "OBJ_DIR", std::format("{}/obj/$(config)/$(NAME)", tram::fs::TRAM_BUILD));
         internal::make_variable(file_out, "OBJ_FILES", "$(foreach src,$(SRC_FILES),$(OBJ_DIR)/$(notdir $(src:.cpp=.o)))");
 
         file_out << "INCLUDE_PATHS := ";
