@@ -25,7 +25,7 @@ namespace internal {
         if (!util::contains_value(ALLOWED_KIND_VALUES, kind))
             kind = "app";
 
-        this->lang = toml::find_or(v, "lang", "C++11");
+        this->lang = toml::find_or(v, "lang", "c++11");
         psap::string::convert_str_to_lower(lang);
 
         this->arch = toml::find_or(v, "arch", "64");
@@ -36,6 +36,7 @@ namespace internal {
         this->src_files = toml::find_or(v, "src_files", std::vector<std::string> {});
         this->include_files = toml::find_or(v, "include_files", std::vector<std::string> {});
         this->filename = toml::find_or(v, "filename", "my_app");
+        this->out = toml::find_or(v, "out", "bin");
 
         this->warning = toml::find_or(v, "warning", "default");
 
@@ -86,7 +87,7 @@ namespace internal {
             m_Settings.name = toml::find_or<std::string>(result, "name", "dummy");
             m_Settings.version = toml::find_or<std::string>(result, "version", "0.0.1");
 
-            m_Build = toml::find_or<internal::build_conf>(result, "build", internal::build_conf { .kind = "app", .lang = "c++11", .arch = "64", .filename = "my_app", .warning = "", .toolset = "gcc" });
+            m_Build = toml::find_or<internal::build_conf>(result, "build", internal::build_conf {});
 
             auto libs = toml::find_or(result, "libraries", toml::table {});
 

@@ -74,7 +74,7 @@ namespace gen {
 
         file_out << "\n";
 
-        internal::make_variable(file_out, "OUT_DIR", "bin/$(config)");
+        internal::make_variable(file_out, "OUT_DIR", build_conf.out);
         internal::make_variable(file_out, "OUT_BIN", std::format("$(OUT_DIR)/{}", build_conf.filename));
 
         file_out << "\n";
@@ -162,8 +162,13 @@ namespace gen {
 
         std::string resolve_toolset(std::string_view lang, const std::string& toolset) noexcept
         {
+            bool is_cpp = lang.starts_with("c++");
+
             if (toolset == "gcc")
-                return lang.starts_with("c++") ? "g++" : "gcc";
+                return is_cpp ? "g++" : "gcc";
+
+            if (toolset == "clang")
+                return is_cpp ? "clang++" : "clang";
 
             return toolset;
         }

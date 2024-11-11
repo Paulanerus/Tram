@@ -24,14 +24,15 @@ namespace internal {
     };
 
     struct build_conf {
-        std::string kind;
-        std::string lang;
-        std::string arch;
+        std::string kind = "app";
+        std::string lang = "c++11";
+        std::string arch = "64";
         std::vector<std::string> src_files {};
         std::vector<std::string> include_files {};
-        std::string filename;
-        std::string warning;
-        std::string toolset;
+        std::string filename = "my_app";
+        std::string out = "bin";
+        std::string warning = "";
+        std::string toolset = "gcc";
         std::vector<build_filter_conf> configurations {};
 
         void from_toml(const toml::value& v);
