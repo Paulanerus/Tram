@@ -2,7 +2,9 @@
 
 #include <toml.hpp>
 
+#include <array>
 #include <string>
+#include <string_view>
 #include <vector>
 
 namespace tram {
@@ -23,24 +25,22 @@ namespace internal {
 
     struct build_conf {
         std::string kind;
-
-        /*
-            c
-            cpp
-            arch
-        */
-
+        std::string lang;
+        std::string arch;
         std::vector<std::string> src_files {};
         std::vector<std::string> include_files {};
-
         std::string filename;
-
-        std::string warning {};
-
+        std::string warning;
         std::vector<build_filter_conf> configurations {};
 
         void from_toml(const toml::value& v);
     };
+
+    inline constexpr std::array<std::string_view, 3> ALLOWED_KIND_VALUES = { "App", "Shared", "Static" };
+
+    inline constexpr std::array<std::string_view, 2> ALLOWED_ARCH_VALUES = { "x32", "x64" };
+
+    inline constexpr std::array<std::string_view, 3> ALLOWED_WARNING_VALUES = { "Off", "Default", "Extra" };
 
     struct library {
         std::string name;

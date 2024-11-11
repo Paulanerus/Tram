@@ -17,10 +17,23 @@ namespace internal {
     void build_conf::from_toml(const toml::value& v)
     {
         this->kind = toml::find_or(v, "kind", "App");
+
+        if (!util::contains_value(ALLOWED_KIND_VALUES, kind))
+            kind = "App";
+
+        this->lang = toml::find_or(v, "lang", "C++11");
+        this->arch = toml::find_or(v, "arch", "x64");
+
+        if (!util::contains_value(ALLOWED_ARCH_VALUES, arch))
+            arch = "x64";
+
         this->src_files = toml::find_or(v, "src_files", std::vector<std::string> {});
         this->include_files = toml::find_or(v, "include_files", std::vector<std::string> {});
         this->filename = toml::find_or(v, "filename", "my_app");
-        this->warning = toml::find_or(v, "warning", "");
+        this->warning = toml::find_or(v, "warning", "Default");
+
+        if (!util::contains_value(ALLOWED_WARNING_VALUES, warning))
+            warning = "Default";
 
         for (const auto& [key, value] : v.as_table()) {
             if (!value.is_table())
@@ -57,7 +70,7 @@ namespace internal {
             m_Settings.name = toml::find_or<std::string>(result, "name", "dummy");
             m_Settings.version = toml::find_or<std::string>(result, "version", "0.0.1");
 
-            m_Build = toml::find_or<internal::build_conf>(result, "build", internal::build_conf { .kind = "App", .filename = "my_app" });
+            m_Build = toml::find_or<internal::build_conf>(result, "build", internal::build_conf { .kind = "App", .lang = "C++11", .arch = "x64", .filename = "my_app", .warning = "" });
 
             auto libs = toml::find_or(result, "libraries", toml::table {});
 
