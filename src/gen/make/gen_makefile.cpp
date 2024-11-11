@@ -39,8 +39,8 @@ namespace gen {
         file_out << "\n";
 
         internal::make_variable(file_out, "CXX", "g++");
-        internal::make_variable(file_out, "CPP_STD", "-std=c++20");
-        internal::make_variable(file_out, "ARCH", "-m64");
+        internal::make_variable(file_out, "LANG_STD", std::format("-std={}", internal::validate_lang(build_conf.lang)));
+        internal::make_variable(file_out, "ARCH", std::format("-m{}", build_conf.arch));
 
         file_out << "\n";
 
@@ -63,13 +63,13 @@ namespace gen {
 
         file_out << "\n\n";
 
-        internal::make_variable(file_out, "WARN_FLAGS", "-Wall -Wextra");
+        internal::make_variable(file_out, "WARN_FLAGS", internal::translate_warning_to_flags(build_conf.warning));
 
         file_out << "\n";
 
         internal::make_config(file_out, conf.build_configurations());
 
-        internal::make_variable(file_out, "LDFLAGS", "-L/usr/lib64");
+        internal::make_variable(file_out, "LDFLAGS", std::format("-L/usr/lib{}", build_conf.arch));
         internal::make_variable(file_out, "LDLIBS", "");
 
         file_out << "\n";
@@ -82,7 +82,7 @@ namespace gen {
         file_out << "$(OBJ_DIR)/%.o: */%.cpp\n";
         file_out << "\t@echo \"\033[0;35m Compiling\033[0m $<\"\n";
         file_out << "\t@mkdir -p $(OBJ_DIR)\n";
-        file_out << "\t@$(CXX) $(CPP_STD) $(ARCH) $(DEFINES) $(SYMBOLS) $(OPT_FLAGS) $(WARN_FLAGS) $(INCLUDE_PATHS) -c $< -o $@\n";
+        file_out << "\t@$(CXX) $(LANG_STD) $(ARCH) $(DEFINES) $(SYMBOLS) $(OPT_FLAGS) $(WARN_FLAGS) $(INCLUDE_PATHS) -c $< -o $@\n";
 
         file_out << "\n";
 
@@ -139,6 +139,27 @@ namespace gen {
             file_out << fs::last_modified_time(fs::TRAM_PROJECT_FILE);
 
             return NO_ERROR;
+        }
+
+        std::string validate_lang(std::string lang)
+        {
+            psap::string::convert_str_to_lower(lang);
+
+            if (!lang.starts_with("c"))
+                return "c++11";
+
+            return lang;
+        }
+
+        std::string translate_warning_to_flags(std::string_view warning)
+        {
+            if (warning == "off" || warning == "Off")
+                return "-w";
+
+            if (warning == "extra" || warning == "Extra")
+                return "-Wall -Wextra";
+
+            return "";
         }
     }
 }

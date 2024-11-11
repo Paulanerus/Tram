@@ -17,6 +17,10 @@ namespace gen {
         void make_config(std::ofstream& file_out, const std::vector<tram::internal::build_filter_conf>& configs) noexcept;
 
         TramError write_filetime() noexcept;
+
+        std::string validate_lang(std::string lang);
+
+        std::string translate_warning_to_flags(std::string_view warning);
     }
 }
 }
