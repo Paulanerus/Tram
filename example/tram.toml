@@ -3,14 +3,14 @@ version = "2024.6.1"
 
 [build]
 kind = "App"
-lang = "C++20" # -> lang = "C<Ver>" or "C++<Ver>"
+lang = "C++20"
 arch = "64"
 
 src_files = ["src/"]
 include_files = ["include/"]
 
-filename = "$name"     # $version $buildtype $arch $date
-out = "bin/$buildtype"
+filename = "$name"
+out = "bin/$build"
 
 warning = "Extra"
 
@@ -31,11 +31,11 @@ optimize = true
 url = "github@ToruNiina/toml11"
 branch = "dev"
 include_files = "include/"
-lang = "C++20"                  # TODO
+lang = "C++20"
 
 [libraries.lib-compile]
 url = "gitlab@test"
-kind = "Shared"            # TODO
+kind = "Shared"
 include_files = "include/"
 src_files = "src/"
 links = ["fmt", "openssl"]
