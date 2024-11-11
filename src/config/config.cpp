@@ -30,7 +30,7 @@ namespace internal {
 
         this->arch = toml::find_or(v, "arch", "64");
 
-        if (!util::contains_value(ALLOWED_ARCH_VALUES, arch))
+        if (arch != "32" && arch != "64")
             arch = "64";
 
         this->src_files = toml::find_or(v, "src_files", std::vector<std::string> {});
@@ -48,7 +48,7 @@ namespace internal {
 
         psap::string::convert_str_to_lower(toolset);
 
-        if (!util::contains_value(ALLOWED_TOOLSET_VALUES, toolset))
+        if (toolset != "gcc" && toolset != "clang")
             toolset = "gcc";
 
         for (const auto& [key, value] : v.as_table()) {
