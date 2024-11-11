@@ -38,7 +38,7 @@ namespace internal {
 
     inline constexpr std::array<std::string_view, 3> ALLOWED_KIND_VALUES = { "App", "Shared", "Static" };
 
-    inline constexpr std::array<std::string_view, 2> ALLOWED_ARCH_VALUES = { "x32", "x64" };
+    inline constexpr std::array<std::string_view, 2> ALLOWED_ARCH_VALUES = { "32", "64" };
 
     inline constexpr std::array<std::string_view, 3> ALLOWED_WARNING_VALUES = { "Off", "Default", "Extra" };
 

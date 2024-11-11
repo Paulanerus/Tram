@@ -4,7 +4,7 @@ version = "2024.6.1"
 [build]
 kind = "App"
 lang = "C++20" # -> lang = "C<Ver>" or "C++<Ver>"
-arch = "x64"
+arch = "64"
 
 src_files = ["src/"]
 include_files = ["include/"]
