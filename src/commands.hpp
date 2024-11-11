@@ -67,7 +67,7 @@ inline auto BUILD_ACTION = []([[maybe_unused]] const auto& _parser, const psap::
     if (!std::filesystem::exists(temp_dir / "Makefile"))
         std::cout << "No Makfile was found in " << (temp_dir / "Makefile") << std::endl;
 
-    system::call(std::format("make -f {}/Makefile config=", fs::TRAM_TEMP, cmd["--release"] ? "release" : "debug"));
+    system::call(std::format("make -f {}/Makefile config={}", fs::TRAM_TEMP, cmd["--release"] ? "release" : "debug"));
 };
 
 inline auto RUN_ACTION = []([[maybe_unused]] const auto& _parser, [[maybe_unused]] const auto& _cmd) {
