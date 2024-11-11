@@ -18,6 +18,29 @@ namespace string {
     std::string normalize_filename(std::string filename);
 }
 
+namespace util {
+
+    template<std::size_t N>
+    inline bool contains_value(const std::array<std::string_view, N>& values, std::string_view val, bool ignore_case = true)
+    {
+        auto compare = [ignore_case](std::string_view lhs, std::string_view rhs) {
+            if (ignore_case) {
+                return std::equal(lhs.begin(), lhs.end(), rhs.begin(), rhs.end(),
+                    [](char a, char b) { return std::tolower(a) == std::tolower(b); });
+            } else {
+                return lhs == rhs;
+            }
+        };
+
+        for (auto& v : values) {
+            if (compare(v, val))
+                return true;
+        }
+
+        return false;
+    }
+}
+
 namespace fs {
 
     struct SampleFile {
