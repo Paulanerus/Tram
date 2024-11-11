@@ -40,7 +40,7 @@ inline auto NEW_ACTION = [](const psap::ArgParser& parser, const psap::Command& 
     if (cmd["--sample"])
         fs::create_sample_files(project_name);
 
-    std::cout << "Initialized project in '" << psap::color::light_magenta << std::format("./{}", project_name.string()) << psap::color::reset << "'" << std::endl;
+    std::cout << "Initialized project in '" << psap::color::magenta << std::format("./{}", project_name.string()) << psap::color::reset << "'" << std::endl;
 };
 
 inline auto ADD_ACTION = []([[maybe_unused]] const auto& _parser, [[maybe_unused]] const auto& _cmd) {
