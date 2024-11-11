@@ -22,10 +22,10 @@ namespace internal {
             kind = "App";
 
         this->lang = toml::find_or(v, "lang", "C++11");
-        this->arch = toml::find_or(v, "arch", "x64");
+        this->arch = toml::find_or(v, "arch", "64");
 
         if (!util::contains_value(ALLOWED_ARCH_VALUES, arch))
-            arch = "x64";
+            arch = "64";
 
         this->src_files = toml::find_or(v, "src_files", std::vector<std::string> {});
         this->include_files = toml::find_or(v, "include_files", std::vector<std::string> {});
@@ -70,7 +70,7 @@ namespace internal {
             m_Settings.name = toml::find_or<std::string>(result, "name", "dummy");
             m_Settings.version = toml::find_or<std::string>(result, "version", "0.0.1");
 
-            m_Build = toml::find_or<internal::build_conf>(result, "build", internal::build_conf { .kind = "App", .lang = "C++11", .arch = "x64", .filename = "my_app", .warning = "" });
+            m_Build = toml::find_or<internal::build_conf>(result, "build", internal::build_conf { .kind = "App", .lang = "C++11", .arch = "64", .filename = "my_app", .warning = "" });
 
             auto libs = toml::find_or(result, "libraries", toml::table {});
 
