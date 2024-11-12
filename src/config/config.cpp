@@ -85,10 +85,10 @@ namespace internal {
     void library::from_toml(const toml::value& v)
     {
         this->url = toml::find_or(v, "url", "");
-        this->branch = toml::find_or(v, "branch", "master");
+        this->branch = toml::find_or(v, "branch", "");
         this->src_files = toml::find_or(v, "src_files", "");
         this->include_files = toml::find_or(v, "include_files", "");
-        this->kind = toml::find_or(v, "kind", "Shared");
+        this->kind = toml::find_or(v, "kind", "");
 
         this->links = toml::find_or<std::vector<std::string>>(v, "links", {});
         this->defines = toml::find_or<std::vector<std::string>>(v, "defines", {});
