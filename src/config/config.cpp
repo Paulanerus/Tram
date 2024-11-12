@@ -5,7 +5,6 @@
 #include <arg_parser.hpp>
 
 #include <iostream>
-#include <regex>
 
 namespace tram {
 namespace internal {
