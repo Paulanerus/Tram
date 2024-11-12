@@ -62,16 +62,20 @@ inline auto BUILD_ACTION = []([[maybe_unused]] const auto& _parser, const psap::
         }
     }
 
+    const auto& build_conf = tram::config().build();
+    auto default_conf = build_conf.configurations.empty() ? "" : build_conf.configurations[0].name;
+
     std::filesystem::path temp_dir { fs::TRAM_TEMP };
 
     if (!std::filesystem::exists(temp_dir / "Makefile"))
         std::cout << "No Makfile was found in " << (temp_dir / "Makefile") << std::endl;
 
-    system::call(std::format("make -f {}/Makefile config={}", fs::TRAM_TEMP, cmd["--release"] ? "release" : "debug"));
+    system::call(std::format("make -f {}/Makefile config={}", fs::TRAM_TEMP, cmd.get<std::string>("--config").value_or(default_conf)));
 };
 
-inline auto RUN_ACTION = []([[maybe_unused]] const auto& _parser, [[maybe_unused]] const auto& _cmd) {
+inline auto RUN_ACTION = [](const psap::ArgParser& parser, const psap::Command& cmd) {
     tram::load_config();
+
 };
 
 inline auto VERSION_ACTION = []([[maybe_unused]] const auto& _parser, [[maybe_unused]] const auto& _cmd) {

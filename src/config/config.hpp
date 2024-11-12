@@ -35,6 +35,8 @@ namespace internal {
         std::string toolset = "gcc";
         std::vector<build_filter_conf> configurations {};
 
+        std::string default_conf() const noexcept;
+
         void from_toml(const toml::value& v);
     };
 

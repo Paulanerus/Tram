@@ -31,7 +31,7 @@ namespace gen {
             return make_error(ErrorCode::UnableToCreateMakefile);
 
         file_out << ".SILENT:\n";
-        file_out << "config ?= debug\n\n";
+        file_out << std::format("config ?= {}\n\n", build_conf.default_conf());
 
         internal::make_variable(file_out, "NAME", settings.name);
         internal::make_variable(file_out, "VERSION", settings.version);

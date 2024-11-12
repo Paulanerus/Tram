@@ -17,6 +17,11 @@ namespace internal {
         this->optimize = toml::find_or<bool>(v, "optimize", false);
     }
 
+    std::string build_conf::default_conf() const noexcept
+    {
+        return configurations.empty() ? "" : configurations[0].name;
+    }
+
     void build_conf::from_toml(const toml::value& v)
     {
         this->kind = toml::find_or(v, "kind", "app");
