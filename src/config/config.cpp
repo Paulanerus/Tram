@@ -17,9 +17,23 @@ namespace internal {
         this->optimize = toml::find_or<bool>(v, "optimize", false);
     }
 
-    std::string build_conf::default_conf() const noexcept
+    std::string build_conf::default_config() const noexcept
     {
         return configurations.empty() ? "" : configurations[0].name;
+    }
+
+    std::string build_conf::resolve_build_config(const std::optional<std::string>& val) const noexcept
+    {
+        if (configurations.empty() || !val.has_value())
+            return default_config();
+
+        for (auto& conf : configurations) {
+
+            if (conf.name == val.value())
+                return conf.name;
+        }
+
+        return default_config();
     }
 
     void build_conf::from_toml(const toml::value& v)

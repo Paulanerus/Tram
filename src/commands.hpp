@@ -65,7 +65,7 @@ inline auto BUILD_ACTION = []([[maybe_unused]] const auto& _parser, const psap::
     std::filesystem::path temp_dir { fs::TRAM_TEMP };
 
     if (std::filesystem::exists(temp_dir / "Makefile"))
-        system::call(std::format("make -f {}/Makefile config={}", fs::TRAM_TEMP, cmd.get<std::string>("--config").value_or(tram::config().build().default_conf())));
+        system::call(std::format("make -f {}/Makefile config={}", fs::TRAM_TEMP, tram::config().build().resolve_build_config(cmd.get<std::string>("--config"))));
     else
         std::cout << "No Makfile was found in " << (temp_dir / "Makefile") << std::endl;
 };
@@ -75,8 +75,10 @@ inline auto RUN_ACTION = [](const psap::ArgParser& parser, const psap::Command& 
 
     const auto& build_conf = tram::config().build();
 
+    std::string build_config = build_conf.resolve_build_config(cmd.get<std::string>("--config"));
+
     std::string build_dir = build_conf.out;
-    string::replace_all(build_dir, "$(config)", cmd.get<std::string>("--config").value_or(build_conf.default_conf()));
+    string::replace_all(build_dir, "$(config)", build_config);
 
     std::filesystem::path path { build_dir };
     path /= build_conf.filename;
@@ -90,7 +92,7 @@ inline auto RUN_ACTION = [](const psap::ArgParser& parser, const psap::Command& 
         std::filesystem::path temp_dir { fs::TRAM_TEMP };
 
         if (std::filesystem::exists(temp_dir / "Makefile"))
-            system::call(std::format("make -f {}/Makefile config={}", fs::TRAM_TEMP, cmd.get<std::string>("--config").value_or(build_conf.default_conf())));
+            system::call(std::format("make -f {}/Makefile config={}", fs::TRAM_TEMP, build_config));
         else
             std::cout << "No Makfile was found in " << (temp_dir / "Makefile") << std::endl;
     }
