@@ -5,6 +5,7 @@
 #include <arg_parser.hpp>
 
 #include <iostream>
+#include <regex>
 
 namespace tram {
 namespace internal {
@@ -100,6 +101,32 @@ namespace internal {
 
                 m_Libraries.emplace_back(std::move(lib));
             }
+
+            resolve_placeholder();
+        }
+    }
+
+    void config_loader::resolve_placeholder()
+    {
+        std::unordered_map<std::string, std::string> placeholders = {
+            { "$name", m_Settings.name },
+            { "$ver", m_Settings.version },
+            { "$arch", m_Build.arch },
+            { "$build", "$(config)" },
+            { " ", "_" }
+        };
+
+        auto replace_all = [](std::string& str, const std::string& from, const std::string& to) {
+            std::size_t start {};
+            while ((start = str.find(from, start)) != std::string::npos) {
+                str.replace(start, from.length(), to);
+                start += to.length();
+            }
+        };
+
+        for (auto& [key, val] : placeholders) {
+            replace_all(m_Build.out, key, val);
+            replace_all(m_Build.filename, key, val);
         }
     }
 }

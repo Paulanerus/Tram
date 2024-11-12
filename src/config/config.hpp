@@ -113,6 +113,8 @@ namespace internal {
         build_conf m_Build;
 
         std::vector<internal::library> m_Libraries;
+
+        void resolve_placeholder();
     };
 }
 
