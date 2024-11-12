@@ -26,6 +26,18 @@ namespace string {
 
         return filename;
     }
+
+    void replace_all(std::string& str, std::string_view from, std::string_view to)
+    {
+        if (from.empty())
+            return;
+
+        std::size_t start {};
+        while ((start = str.find(from, start)) != std::string::npos) {
+            str.replace(start, from.length(), to);
+            start += to.length();
+        }
+    }
 };
 
 namespace fs {

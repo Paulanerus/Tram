@@ -108,7 +108,7 @@ namespace internal {
 
     void config_loader::resolve_placeholder()
     {
-        std::unordered_map<std::string, std::string> placeholders = {
+        static const std::unordered_map<std::string_view, std::string_view> placeholders = {
             { "$name", m_Settings.name },
             { "$ver", m_Settings.version },
             { "$arch", m_Build.arch },
@@ -116,17 +116,9 @@ namespace internal {
             { " ", "_" }
         };
 
-        auto replace_all = [](std::string& str, const std::string& from, const std::string& to) {
-            std::size_t start {};
-            while ((start = str.find(from, start)) != std::string::npos) {
-                str.replace(start, from.length(), to);
-                start += to.length();
-            }
-        };
-
         for (auto& [key, val] : placeholders) {
-            replace_all(m_Build.out, key, val);
-            replace_all(m_Build.filename, key, val);
+            string::replace_all(m_Build.out, key, val);
+            string::replace_all(m_Build.filename, key, val);
         }
     }
 }

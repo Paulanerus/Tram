@@ -16,6 +16,8 @@ namespace system {
 
 namespace string {
     std::string normalize_filename(std::string filename);
+
+    void replace_all(std::string& str, std::string_view from, std::string_view to);
 }
 
 namespace util {
