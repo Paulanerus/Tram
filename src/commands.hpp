@@ -6,6 +6,7 @@
 #include "config/config.hpp"
 #include "error/error.hpp"
 #include "gen/make/gen_makefile.hpp"
+#include "lib/lib_manager.hpp"
 #include "utility/utility.hpp"
 
 #include <filesystem>
@@ -41,6 +42,28 @@ inline auto NEW_ACTION = [](const psap::ArgParser& parser, const psap::Command& 
         fs::create_sample_files(project_name);
 
     std::cout << "Initialized project in '" << psap::color::magenta << std::format("./{}", project_name.string()) << psap::color::reset << "'" << std::endl;
+};
+
+inline auto LIBS_ACTION = []([[maybe_unused]] const auto& _parser, const psap::Command& cmd) {
+    tram::load_config();
+
+    bool has_installed_flag = cmd["--installed"];
+
+    const auto& libs = tram::config().libraries();
+
+    std::cout << std::endl;
+
+    std::cout << "Libraries:" << "\n";
+
+    for (auto& lib : libs) {
+
+        if (has_installed_flag && !lib::validate_install(lib))
+            continue;
+
+        std::cout << std::format("\t{} {}\n", lib.name, (!has_installed_flag && lib::validate_install(lib) ? std::format("- {}", psap::color::light_green("installed")) : ""));
+    }
+
+    std::cout << std::endl;
 };
 
 inline auto ADD_ACTION = []([[maybe_unused]] const auto& _parser, [[maybe_unused]] const auto& _cmd) {

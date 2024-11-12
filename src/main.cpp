@@ -22,14 +22,18 @@ int main(int argc, char* argv[])
         .option(psap::make_flag("--sample", "-s", "Create sample files like README.md, LICENSE.md, etc."))
         .action(tram::NEW_ACTION);
 
+    parser.command("libs", "l")
+        .help("Lists every library and its status.")
+        .option(psap::make_flag("--installed", "-i", "View filter that lists only installed libraries."))
+        .action(tram::LIBS_ACTION);
+
     parser.command("add", "a")
-        .help("Adds a new dependency.")
+        .help("Adds a new library.")
         .option(psap::make_value("--branch", "-b", "Select a specific branch."))
-        .option(psap::make_flag("--link", "-l", "Links the specified library."))
         .action(tram::ADD_ACTION);
 
-    parser.command("remove", "rm", "delete", "del")
-        .help("Removes a dependency.")
+    parser.command("remove", "rem", "rm", "delete", "del")
+        .help("Removes a library.")
         .action(tram::REMOVE_ACTION);
 
     parser.command("build", "b")
