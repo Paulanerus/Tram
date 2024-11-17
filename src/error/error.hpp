@@ -14,10 +14,13 @@ enum class ErrorCode {
     DirAlreadyExists,
     UnableToCreateFile,
     UnableToCreateMakefile,
+    LibraryIsNotInstalled,
 };
 
 class TramError {
 public:
+    TramError() = default;
+
     TramError(ErrorCode&& code, std::string&& error_message)
         : m_ErrorCode(std::move(code))
         , m_ErrorMessage(std::move(error_message))
@@ -67,6 +70,11 @@ public:
         std::cout << "[" << code_to_str() << "] " << m_ErrorMessage << std::endl;
     }
 
+    void clear() noexcept
+    {
+        m_ErrorCode = ErrorCode::None;
+    }
+
 private:
     ErrorCode m_ErrorCode;
 
@@ -85,6 +93,8 @@ private:
             return "DirAlreadyExists";
         case ErrorCode::UnableToCreateMakefile:
             return "UnableToCreateMakefile";
+        case ErrorCode::LibraryIsNotInstalled:
+            return "LibraryIsNotInstalled";
         default:
             return "None";
         }
