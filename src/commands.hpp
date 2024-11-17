@@ -60,7 +60,7 @@ inline auto LIBS_ACTION = []([[maybe_unused]] const auto& _parser, const psap::C
         if (has_installed_flag && !lib::validate_install(lib))
             continue;
 
-        std::cout << std::format("\t{} {}\n", lib.name, (!has_installed_flag && lib::validate_install(lib) ? std::format("- {}", psap::color::light_green("installed")) : ""));
+        std::cout << std::format("\t{} [{}]\n", lib.name, (!has_installed_flag && lib::validate_install(lib) ? std::format("- {}", psap::color::light_green("installed")) : psap::color::light_red("not installed")));
     }
 
     std::cout << std::endl;
