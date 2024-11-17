@@ -57,6 +57,8 @@ namespace fs {
 
     inline constexpr std::string_view TRAM_TEMP = ".tram";
 
+    inline constexpr std::string_view TRAM_LIBS = ".tram/libs";
+
     inline constexpr std::string_view TRAM_BUILD = ".tram/build";
 
     inline constexpr std::string_view TRAM_LAST_MODIFIED_FILE = ".tram/last_build_file";
