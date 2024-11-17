@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../config/config.hpp"
+#include "../error/error.hpp"
 
 namespace tram {
 namespace lib {
@@ -9,6 +10,6 @@ namespace lib {
 
     void install_lib(const tram::internal::library& lib) noexcept;
 
-    void remove_lib(const tram::internal::library& lib) noexcept;
+    TramError remove_lib(const tram::internal::library& lib) noexcept;
 }
 }
