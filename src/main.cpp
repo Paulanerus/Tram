@@ -11,6 +11,8 @@ int main(int argc, char* argv[])
         psap::ParserConf { .name = "tram", .unknown_option_policy = psap::UnknownOptionPolicy::ReportRemove }
     };
 
+    parser.option(psap::make_flag("--verbose", "-v", "Print various debugging information."));
+
     parser.command("help", "h")
         .help("Displays help for a tram subcommand.")
         .fallback()
