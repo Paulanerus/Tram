@@ -1,6 +1,7 @@
 #pragma once
 
 #include <arg_parser.hpp>
+#include <iomanip>
 #include <toml.hpp>
 
 #include "config/config.hpp"
@@ -12,6 +13,7 @@
 #include <filesystem>
 #include <format>
 #include <iostream>
+#include <type_traits>
 
 namespace tram {
 
@@ -70,8 +72,29 @@ inline auto ADD_ACTION = []([[maybe_unused]] const auto& _parser, [[maybe_unused
     tram::load_config();
 };
 
-inline auto REMOVE_ACTION = []([[maybe_unused]] const auto& _parser, [[maybe_unused]] const auto& _cmd) {
+inline auto REMOVE_ACTION = [](const psap::ArgParser& parser, [[maybe_unused]] const auto& _cmd) {
     tram::load_config();
+
+    const std::string lib_name = parser.arg_at(0);
+
+    for (auto& lib : tram::config().libraries()) {
+        if (lib.name != lib_name)
+            continue;
+
+        auto err = lib::remove_lib(lib);
+
+        if (parser["--verbose"] && err.is(ErrorCode::LibraryIsNotInstalled))
+            err.report();
+
+        if (err)
+            std::cout << psap::color::light_red << "Could not remove the library " << std::quoted(lib_name) << ", cause it is not installed." << psap::color::reset << std::endl;
+        else
+            std::cout << "Removed " << std::quoted(psap::color::light_cyan(lib.name)) << std::endl;
+
+        return;
+    }
+
+    std::cout << psap::color::light_red << "Missing library(" << lib_name << ") in the tram.toml." << psap::color::reset << std::endl;
 };
 
 inline auto BUILD_ACTION = []([[maybe_unused]] const auto& _parser, const psap::Command& cmd) {
