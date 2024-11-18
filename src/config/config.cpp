@@ -94,10 +94,6 @@ namespace internal {
         this->build_cmd.linux = toml::find_or(v, "cmd", "linux", "");
         this->build_cmd.mac = toml::find_or(v, "cmd", "mac", "");
 
-        std::cout << build_cmd.windows << std::endl;
-        std::cout << build_cmd.linux << std::endl;
-        std::cout << build_cmd.mac << std::endl;
-
         this->links = toml::find_or<std::vector<std::string>>(v, "links", {});
         this->defines = toml::find_or<std::vector<std::string>>(v, "defines", {});
     }
