@@ -78,6 +78,11 @@ inline auto REMOVE_ACTION = [](const psap::ArgParser& parser, [[maybe_unused]] c
 
     const std::string lib_name = parser.arg_at(0);
 
+    if (lib_name.empty()) {
+        std::cout << "Please provide a library name." << std::endl;
+        return;
+    }
+
     for (auto& lib : tram::config().libraries()) {
         if (lib.name != lib_name)
             continue;
@@ -95,7 +100,7 @@ inline auto REMOVE_ACTION = [](const psap::ArgParser& parser, [[maybe_unused]] c
         return;
     }
 
-    std::cout << psap::color::light_red << "Missing library(" << lib_name << ") in the tram.toml." << psap::color::reset << std::endl;
+    std::cout << psap::color::light_red << "Missing library (" << lib_name << ") in the tram.toml." << psap::color::reset << std::endl;
 };
 
 inline auto BUILD_ACTION = []([[maybe_unused]] const auto& _parser, const psap::Command& cmd) {
