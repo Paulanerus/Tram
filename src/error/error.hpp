@@ -16,6 +16,7 @@ enum class ErrorCode {
     UnableToCreateMakefile,
     LibraryIsNotInstalled,
     Curl,
+    GlobalLibraryCannotBeRemoved
 };
 
 class TramError {
@@ -98,6 +99,8 @@ private:
             return "LibraryIsNotInstalled";
         case ErrorCode::Curl:
             return "Curl";
+        case ErrorCode::GlobalLibraryCannotBeRemoved:
+            return "GlobalLibraryCannotBeRemoved";
         default:
             return "None";
         }
