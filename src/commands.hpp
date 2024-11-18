@@ -60,10 +60,12 @@ inline auto LIBS_ACTION = []([[maybe_unused]] const auto& _parser, const psap::C
 
     for (auto& lib : libs) {
 
-        if (has_installed_flag && !lib::validate_install(lib))
+        auto [installed, in_global_scope] = lib::validate_install(lib);
+
+        if (has_installed_flag && !installed)
             continue;
 
-        std::cout << std::format("\t{} [{}]\n", lib.name, (!has_installed_flag && lib::validate_install(lib) ? std::format("- {}", psap::color::light_green("installed")) : psap::color::light_red("not installed")));
+        std::cout << std::format("\t{} - [{}]\n", lib.name, (!has_installed_flag && installed ? std::format("{} {{}}", psap::color::light_green("installed"), in_global_scope ? "global" : "local") : psap::color::light_red("not installed")));
     }
 
     std::cout << std::endl;
@@ -84,10 +86,11 @@ inline auto REMOVE_ACTION = [](const psap::ArgParser& parser, [[maybe_unused]] c
     }
 
     for (auto& lib : tram::config().libraries()) {
+       
         if (lib.name != lib_name)
             continue;
 
-        auto err = lib::remove_lib(lib);
+        auto err = lib::remove_lib(lib, false);
 
         if (parser["--verbose"] && err.is(ErrorCode::LibraryIsNotInstalled))
             err.report();
