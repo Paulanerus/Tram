@@ -4,6 +4,7 @@
 
 #include <curl/curl.h>
 
+#include <fstream>
 #include <memory>
 #include <string_view>
 
@@ -16,27 +17,25 @@ namespace curl {
             global_curl_state() noexcept;
             ~global_curl_state() noexcept;
         };
+
+        std::size_t write_data(void* buffer, std::size_t size, std::size_t nmemb, void* stream) noexcept;
     }
 
     class Client {
     public:
-        Client(bool verbose)
+        Client(bool verbose = false) noexcept
             : m_Handle(curl_easy_init(), &curl_easy_cleanup)
+            , m_Failed(!m_Handle)
         {
-            if (!m_Handle) {
-                m_Failed = true;
+            if (m_Failed)
                 return;
-            }
 
-            set_opt(CURLOPT_VERBOSE, verbose ? 1 : 0);
-            set_opt(CURLOPT_NOPROGRESS, 1);
+            curl_easy_setopt(m_Handle.get(), CURLOPT_VERBOSE, verbose ? 1 : 0);
+            curl_easy_setopt(m_Handle.get(), CURLOPT_NOPROGRESS, 1);
+            curl_easy_setopt(m_Handle.get(), CURLOPT_FOLLOWLOCATION, 1);
         }
 
-        template<typename T>
-        void set_opt(CURLoption option, T val) noexcept
-        {
-            curl_easy_setopt(m_Handle.get(), option, val);
-        }
+        TramError download_file(std::string_view name, std::string_view url) noexcept;
 
         bool failed() const noexcept
         {
