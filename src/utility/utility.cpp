@@ -11,6 +11,20 @@
 
 namespace tram {
 namespace system {
+
+    OS current_os() noexcept
+    {
+#ifdef __WIN32
+        return OS::Winodws;
+#elif __APPLE__
+        return OS::Mac;
+#elif __unix__
+        return OS::UnixBased;
+#else
+        return OS::Unknown;
+#endif
+    }
+
     int call(std::string_view command) noexcept
     {
         int status_code = std::system(command.data());

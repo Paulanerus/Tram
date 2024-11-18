@@ -11,6 +11,16 @@
 
 namespace tram {
 namespace system {
+
+    enum class OS {
+        Unknown,
+        UnixBased,
+        Mac,
+        Windows,
+    };
+
+    OS current_os() noexcept;
+
     int call(std::string_view command) noexcept;
 }
 
