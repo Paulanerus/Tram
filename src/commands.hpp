@@ -13,7 +13,8 @@
 #include <filesystem>
 #include <format>
 #include <iostream>
-#include <type_traits>
+
+#include <curl/curl.h>
 
 namespace tram {
 
@@ -152,13 +153,16 @@ inline auto VERSION_ACTION = []([[maybe_unused]] const auto& _parser, [[maybe_un
 
 inline auto LICENCE_ACTION = []([[maybe_unused]] const auto& _parser, [[maybe_unused]] const auto& _cmd) {
     std::cout
-        << std::format("\n{}\n{}\n\n{}\n\n\n{}\n{}\n\n{}\n",
+        << std::format("\n{}\n{}\n\n{}\n\n\n{}\n{}\n\n{}\n\n\n{}\n{}\n\n{}\n",
                "ArgParser by Paulanerus",
                "https://github.com/Paulanerus/ArgParser",
                psap::LICENSE_NOTICE,
                "toml11 by ToruNiina",
                "https://github.com/ToruNiina/toml11",
-               toml::license_notice())
+               toml::license_notice(),
+               "libcurl by Daniel Stenberg",
+               "https://curl.se/libcurl/",
+               "https://curl.se/docs/copyright.html")
         << std::endl;
 };
 }
