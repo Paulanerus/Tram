@@ -1,6 +1,7 @@
 #include "utility.hpp"
 
 #include <algorithm>
+#include <cstdlib>
 #include <exception>
 #include <filesystem>
 #include <fstream>
@@ -55,6 +56,25 @@ namespace string {
 };
 
 namespace fs {
+    std::filesystem::path global_tram_dir() noexcept
+    {
+        system::OS os = system::current_os();
+
+        if (os == system::OS::Unknown) {
+            return "";
+        } else if (os == system::OS::Mac) {
+            return "";
+        }
+
+        if (auto env = std::getenv(os == system::OS::UnixBased ? "HOME" : "APPDATA")) {
+
+            std::filesystem::path home { env };
+            return home / TRAM_TEMP;
+        }
+
+        return "";
+    }
+
     TramError create_dir_if_notexists(const std::filesystem::path& path) noexcept
     {
         std::error_code ec;

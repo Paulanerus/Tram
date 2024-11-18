@@ -75,6 +75,8 @@ namespace fs {
 
     inline constexpr std::string_view TRAM_PROJECT_FILE = "tram.toml";
 
+    std::filesystem::path global_tram_dir() noexcept;
+
     TramError create_dir_if_notexists(const std::filesystem::path& path) noexcept;
 
     TramError create_file(const std::filesystem::path& path, std::string_view content, bool override = false) noexcept;
