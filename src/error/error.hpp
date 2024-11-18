@@ -15,6 +15,7 @@ enum class ErrorCode {
     UnableToCreateFile,
     UnableToCreateMakefile,
     LibraryIsNotInstalled,
+    Curl,
 };
 
 class TramError {
@@ -95,6 +96,8 @@ private:
             return "UnableToCreateMakefile";
         case ErrorCode::LibraryIsNotInstalled:
             return "LibraryIsNotInstalled";
+        case ErrorCode::Curl:
+            return "Curl";
         default:
             return "None";
         }
