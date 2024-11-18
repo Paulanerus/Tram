@@ -41,6 +41,10 @@ src_files = "src/"
 links = ["fmt", "openssl"]
 defines = ["TEST"]
 
+cmd.windows = "windows commands"
+cmd.linux = "unix commands"
+cmd.mac = "mac commands"
+
 [libraries.local]
 url = "fmt" # is treated as "system@"
 

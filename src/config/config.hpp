@@ -46,6 +46,12 @@ namespace internal {
 
     inline constexpr std::array<std::string_view, 3> ALLOWED_WARNING_VALUES = { "off", "default", "extra" };
 
+    struct library_build_cmd {
+        std::string windows;
+        std::string linux;
+        std::string mac;
+    };
+
     struct library {
         std::string name;
         std::string url;
@@ -55,6 +61,8 @@ namespace internal {
         std::string kind;
         std::vector<std::string> links;
         std::vector<std::string> defines;
+
+        library_build_cmd build_cmd;
 
         void from_toml(const toml::value& v);
     };
