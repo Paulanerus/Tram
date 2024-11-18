@@ -2,10 +2,12 @@
 #include <toml.hpp>
 
 #include "commands.hpp"
+#include "curl/curl_client.hpp"
 
 int main(int argc, char* argv[])
 {
     toml::color::enable();
+    tram::curl::global_init();
 
     psap::ArgParser parser {
         psap::ParserConf { .name = "tram", .unknown_option_policy = psap::UnknownOptionPolicy::ReportRemove }
