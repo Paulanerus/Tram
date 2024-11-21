@@ -4,7 +4,6 @@
 
 #include <curl/curl.h>
 
-#include <fstream>
 #include <memory>
 #include <string_view>
 
