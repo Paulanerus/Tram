@@ -86,7 +86,7 @@ inline auto REMOVE_ACTION = [](const psap::ArgParser& parser, [[maybe_unused]] c
     }
 
     for (auto& lib : tram::config().libraries()) {
-       
+
         if (lib.name != lib_name)
             continue;
 
@@ -117,12 +117,12 @@ inline auto BUILD_ACTION = []([[maybe_unused]] const auto& _parser, const psap::
         }
     }
 
-    std::filesystem::path temp_dir { fs::TRAM_TEMP };
+    std::filesystem::path tram_dir { fs::TRAM_DIR };
 
-    if (std::filesystem::exists(temp_dir / "Makefile"))
-        system::call(std::format("make -f {}/Makefile config={}", fs::TRAM_TEMP, tram::config().build().resolve_build_config(cmd.get<std::string>("--config"))));
+    if (std::filesystem::exists(tram_dir / "Makefile"))
+        system::call(std::format("make -f {}/Makefile config={}", fs::TRAM_DIR, tram::config().build().resolve_build_config(cmd.get<std::string>("--config"))));
     else
-        std::cout << "No Makfile was found in " << (temp_dir / "Makefile") << std::endl;
+        std::cout << "No Makfile was found in " << (tram_dir / "Makefile") << std::endl;
 };
 
 inline auto RUN_ACTION = [](const psap::ArgParser& parser, const psap::Command& cmd) {
@@ -144,12 +144,12 @@ inline auto RUN_ACTION = [](const psap::ArgParser& parser, const psap::Command& 
             return;
         }
 
-        std::filesystem::path temp_dir { fs::TRAM_TEMP };
+        std::filesystem::path tram_dir { fs::TRAM_DIR };
 
-        if (std::filesystem::exists(temp_dir / "Makefile"))
-            system::call(std::format("make -f {}/Makefile config={}", fs::TRAM_TEMP, build_config));
+        if (std::filesystem::exists(tram_dir / "Makefile"))
+            system::call(std::format("make -f {}/Makefile config={}", fs::TRAM_DIR, build_config));
         else
-            std::cout << "No Makfile was found in " << (temp_dir / "Makefile") << std::endl;
+            std::cout << "No Makfile was found in " << (tram_dir / "Makefile") << std::endl;
     }
 
     system::call(std::format("{} {}", path.string(), psap::string::join_strings(parser.args(), " ")));

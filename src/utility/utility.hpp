@@ -61,19 +61,19 @@ namespace fs {
         std::string_view content { "" };
     };
 
-    inline constexpr std::array<std::string_view, 8> C_CPP_EXTENSIONS = { ".c", ".C", ".cc", ".cpp", ".CPP", ".cp", ".c++", ".cxx" };
+    inline constexpr std::string_view TRAM_DIR = ".tram";
 
-    inline constexpr std::array<SampleFile, 5> SAMPLE_FILES = { SampleFile { ".gitignore", ".tram/" }, { "src/" }, { "src/main.cpp", "int main(){}" }, { "README.md" }, { "LICENSE.md" } };
-
-    inline constexpr std::string_view TRAM_TEMP = ".tram";
-
-    inline constexpr std::string_view TRAM_LIBS = ".tram/libs";
+    inline constexpr std::string_view TRAM_LIBS = "libs";
 
     inline constexpr std::string_view TRAM_BUILD = ".tram/build";
 
     inline constexpr std::string_view TRAM_LAST_MODIFIED_FILE = ".tram/last_build_file";
 
     inline constexpr std::string_view TRAM_PROJECT_FILE = "tram.toml";
+
+    inline constexpr std::array<std::string_view, 8> C_CPP_EXTENSIONS = { ".c", ".C", ".cc", ".cpp", ".CPP", ".cp", ".c++", ".cxx" };
+
+    inline constexpr std::array<SampleFile, 5> SAMPLE_FILES = { SampleFile { ".gitignore", TRAM_DIR }, { "src/" }, { "src/main.cpp", "int main(){}" }, { "README.md" }, { "LICENSE.md" } };
 
     std::filesystem::path global_tram_dir() noexcept;
 

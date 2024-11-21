@@ -11,11 +11,11 @@ namespace lib {
 
     internal::lib_validate_result validate_install(const tram::internal::library& lib) noexcept
     {
-        const std::filesystem::path lib_path { fs::TRAM_LIBS };
+        const std::filesystem::path base_path { fs::TRAM_DIR };
 
         std::error_code ec;
 
-        auto exists = std::filesystem::exists(lib_path / lib.name, ec);
+        auto exists = std::filesystem::exists(base_path / fs::TRAM_LIBS / lib.name, ec);
 
         if (ec) {
             auto err = make_systemerror(ec);
@@ -29,7 +29,7 @@ namespace lib {
 
         auto global_dir_path = fs::global_tram_dir();
 
-        exists = std::filesystem::exists(global_dir_path / lib.name, ec);
+        exists = std::filesystem::exists(global_dir_path / fs::TRAM_LIBS / lib.name, ec);
 
         if (ec) {
             auto err = make_systemerror(ec);
@@ -41,13 +41,17 @@ namespace lib {
         return { exists, exists };
     }
 
-    void install_lib([[maybe_unused]] const tram::internal::library& lib, [[maybe_unused]] bool global) noexcept
+    void install_lib(const tram::internal::library& lib, bool global) noexcept
     {
+        auto [installed, in_global_scope] = validate_install(lib);
+
+        if (installed && ((in_global_scope && global) || (!in_global_scope && !global)))
+            return;
     }
 
     TramError remove_lib(const tram::internal::library& lib, bool global) noexcept
     {
-        const std::filesystem::path lib_path { fs::TRAM_LIBS };
+        const std::filesystem::path base_path { fs::TRAM_DIR };
 
         auto [installed, in_global_scope] = lib::validate_install(lib);
 
@@ -62,7 +66,7 @@ namespace lib {
 
             std::filesystem::remove_all(fs::global_tram_dir() / lib.name, ec);
         } else
-            std::filesystem::remove_all(lib_path / lib.name, ec);
+            std::filesystem::remove_all(base_path / fs::TRAM_LIBS / lib.name, ec);
 
         return ec ? make_systemerror(ec) : NO_ERROR;
     }
