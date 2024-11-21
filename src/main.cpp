@@ -33,11 +33,13 @@ int main(int argc, char* argv[])
 
     parser.command("add", "a")
         .help("Adds a new library.")
+        .option(psap::make_flag("--global", "-g", "Installs the library into global scope."))
         .option(psap::make_value("--branch", "-b", "Select a specific branch."))
         .action(tram::ADD_ACTION);
 
     parser.command("remove", "rem", "rm", "delete", "del")
         .help("Removes a library.")
+        .option(psap::make_flag("--global", "-g", "Removes the library from global scope."))
         .action(tram::REMOVE_ACTION);
 
     parser.command("build", "b")

@@ -75,7 +75,7 @@ inline auto ADD_ACTION = []([[maybe_unused]] const auto& _parser, [[maybe_unused
     tram::load_config();
 };
 
-inline auto REMOVE_ACTION = [](const psap::ArgParser& parser, [[maybe_unused]] const auto& _cmd) {
+inline auto REMOVE_ACTION = [](const psap::ArgParser& parser, const auto& cmd) {
     tram::load_config();
 
     const std::string lib_name = parser.arg_at(0);
@@ -90,7 +90,7 @@ inline auto REMOVE_ACTION = [](const psap::ArgParser& parser, [[maybe_unused]] c
         if (lib.name != lib_name)
             continue;
 
-        auto err = lib::remove_lib(lib, false);
+        auto err = lib::remove_lib(lib, cmd["--global"]);
 
         if (parser["--verbose"] && err.is(ErrorCode::LibraryIsNotInstalled))
             err.report();
