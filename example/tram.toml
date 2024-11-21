@@ -27,13 +27,13 @@ symbols = false
 optimize = true
 
 
-[libraries.toml11]
+[lib.toml11]
 url = "github@ToruNiina/toml11"
 branch = "dev"
 include_files = "include/"
 lang = "C++20"
 
-[libraries.lib-compile]
+[lib.lib-compile]
 url = "gitlab@test"
 kind = "Shared"
 include_files = "include/"
@@ -45,7 +45,7 @@ cmd.windows = "windows commands"
 cmd.linux = "unix commands"
 cmd.mac = "mac commands"
 
-[libraries.local]
+[lib.local]
 url = "fmt" # is treated as "system@"
 
 include_files = "include/"

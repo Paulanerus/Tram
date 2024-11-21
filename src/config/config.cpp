@@ -112,7 +112,7 @@ namespace internal {
 
             m_Build = toml::find_or<internal::build_conf>(result, "build", internal::build_conf {});
 
-            auto libs = toml::find_or(result, "libraries", toml::table {});
+            auto libs = toml::find_or(result, "lib", toml::table {});
 
             for (const auto& [key, val] : libs) {
                 if (!val.is_table())
