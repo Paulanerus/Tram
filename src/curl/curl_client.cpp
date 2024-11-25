@@ -1,5 +1,6 @@
 #include "curl_client.hpp"
 
+#include <curl/curl.h>
 #include <format>
 #include <fstream>
 
@@ -31,9 +32,9 @@ namespace curl {
         }
     }
 
-    TramError Client::download_file(std::string_view name, std::string_view url) noexcept
+    TramError Client::download_file(const std::filesystem::path& file_path, std::string_view url) noexcept
     {
-        std::ofstream file_out { name.data(), std::ios::trunc };
+        std::ofstream file_out { file_path, std::ios::trunc };
 
         if (!file_out.is_open())
             return make_error(ErrorCode::UnableToCreateFile, "Could not create download file.");
@@ -45,10 +46,7 @@ namespace curl {
 
         auto res = curl_easy_perform(m_Handle.get());
 
-        if (res != CURLE_OK)
-            return make_error(ErrorCode::Curl, std::format("File download from '{}' failed. Error code: {}", url, static_cast<std::underlying_type<CURLcode>::type>(res)));
-
-        return NO_ERROR;
+        return res == CURLE_OK ? NO_ERROR : make_error(ErrorCode::Curl, std::format("File download from '{}' failed. Error code: {}", url, static_cast<std::underlying_type<CURLcode>::type>(res)));
     }
 }
 }

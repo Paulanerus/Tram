@@ -4,6 +4,7 @@
 
 #include <curl/curl.h>
 
+#include <filesystem>
 #include <memory>
 #include <string_view>
 
@@ -34,7 +35,7 @@ namespace curl {
             curl_easy_setopt(m_Handle.get(), CURLOPT_FOLLOWLOCATION, 1);
         }
 
-        TramError download_file(std::string_view name, std::string_view url) noexcept;
+        TramError download_file(const std::filesystem::path& file_path, std::string_view url) noexcept;
 
         bool failed() const noexcept
         {
