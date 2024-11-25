@@ -41,6 +41,8 @@ namespace curl {
 
         curl_easy_setopt(m_Handle.get(), CURLOPT_URL, url.data());
 
+        curl_easy_setopt(m_Handle.get(), CURLOPT_USERAGENT, "Tram/1.0");
+
         curl_easy_setopt(m_Handle.get(), CURLOPT_WRITEFUNCTION, internal::write_data);
         curl_easy_setopt(m_Handle.get(), CURLOPT_WRITEDATA, &file_out);
 
