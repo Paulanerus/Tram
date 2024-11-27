@@ -50,6 +50,8 @@ namespace internal {
         void from_toml(const toml::value& v);
     };
 
+    bool operator==(const library& lhs, const library& rhs) noexcept;
+
     struct wo_comment_config {
         using comment_type = toml::discard_comments;
 

@@ -98,6 +98,11 @@ namespace internal {
         this->defines = toml::find_or<std::vector<std::string>>(v, "defines", {});
     }
 
+    bool operator==(const library& lhs, const library& rhs) noexcept
+    {
+        return lhs.url == rhs.url && lhs.branch == rhs.branch;
+    }
+
     void config_loader::load()
     {
         const auto& parse_result = toml::try_parse<wo_comment_config>(fs::TRAM_PROJECT_FILE.data());
