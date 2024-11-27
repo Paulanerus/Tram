@@ -75,31 +75,46 @@ inline auto LIBS_ACTION = []([[maybe_unused]] const auto& _parser, const psap::C
     std::cout << std::endl;
 };
 
-inline auto ADD_ACTION = []([[maybe_unused]] const auto& _parser, const auto& cmd) {
-    tram::load_config();
+inline auto ADD_ACTION = [](const psap::ArgParser& parser, const psap::Command& cmd) {
+    const std::string url = parser[0];
 
-    curl::Client curl_client;
-
-    if (curl_client.failed()) {
-        std::cout << "Failed to initialize curl" << std::endl;
+    if (url.empty()) {
+        std::cout << psap::color::light_red << "Please provide a URL to add a library." << psap::color::reset << std::endl;
         return;
     }
 
+    tram::load_config();
+
+    auto last_slash = url.find_last_of("/");
+    internal::library lib_to_add {
+        .name = cmd.get<std::string>("--alias").value_or(url.substr(last_slash == std::string::npos ? 0 : last_slash + 1)),
+        .url = url,
+        .branch = cmd.get<std::string>("--branch").value_or(""),
+        .include_files = "",
+        .src_files = "",
+        .kind = "",
+    };
+
     for (auto& lib : tram::config().libraries()) {
-        if (auto err = lib::install_lib(curl_client, lib, cmd["--global"]))
-            err.report();
+
+        if (lib == lib_to_add) {
+            std::cout << psap::color::light_yellow << "The library " << std::quoted(lib_to_add.name) << " was alread added." << psap::color::reset << std::endl;
+            return;
+        }
     }
+
+    tram::config().add_library(std::move(lib_to_add), cmd["--global"]);
 };
 
 inline auto REMOVE_ACTION = [](const psap::ArgParser& parser, const auto& cmd) {
-    tram::load_config();
-
-    const std::string lib_name = parser.arg_at(0);
+    const std::string lib_name = parser[0];
 
     if (lib_name.empty()) {
         std::cout << "Please provide a library name." << std::endl;
         return;
     }
+
+    tram::load_config();
 
     for (auto& lib : tram::config().libraries()) {
 
