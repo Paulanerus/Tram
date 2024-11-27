@@ -10,29 +10,20 @@
 namespace tram {
 namespace internal {
     struct settings_conf {
-        std::string name;
-        std::string version;
+        std::string name, version;
     };
 
     struct build_filter_conf {
         std::string name;
         std::vector<std::string> defines;
-        bool symbols;
-        bool optimize;
+        bool symbols, optimize;
 
         void from_toml(const toml::value& v);
     };
 
     struct build_conf {
-        std::string kind = "app";
-        std::string lang = "c++11";
-        std::string arch = "64";
-        std::vector<std::string> src_files {};
-        std::vector<std::string> include_files {};
-        std::string filename = "my_app";
-        std::string out = "bin";
-        std::string warning = "";
-        std::string toolset = "gcc";
+        std::string kind { "app" }, lang { "c++11" }, arch { "64" }, filename { "my_app" }, out { "bin" }, warning {}, toolset { "gcc" };
+        std::vector<std::string> src_files {}, include_files {};
         std::vector<build_filter_conf> configurations {};
 
         std::string default_config() const noexcept;
@@ -47,22 +38,14 @@ namespace internal {
     inline constexpr std::array<std::string_view, 3> ALLOWED_WARNING_VALUES = { "off", "default", "extra" };
 
     struct library_build_cmd {
-        std::string windows;
-        std::string linux;
-        std::string mac;
+        std::string windows {}, linux {}, mac {};
     };
 
     struct library {
-        std::string name;
-        std::string url;
-        std::string branch;
-        std::string include_files;
-        std::string src_files;
-        std::string kind;
-        std::vector<std::string> links;
-        std::vector<std::string> defines;
+        std::string name, url, branch, include_files, src_files, kind;
+        std::vector<std::string> links {}, defines {};
 
-        library_build_cmd build_cmd;
+        library_build_cmd build_cmd {};
 
         void from_toml(const toml::value& v);
     };
