@@ -43,7 +43,7 @@ namespace lib {
 
             auto lib_file_name = "lib" + lib.url;
 
-            for (auto& entry : std::filesystem::recursive_directory_iterator("usr/lib")) {
+            for (auto& entry : std::filesystem::recursive_directory_iterator("/usr/lib")) {
                 if (!entry.is_regular_file())
                     continue;
 
@@ -53,7 +53,7 @@ namespace lib {
                     return InstallLocation::Lib;
             }
 
-            for (auto& entry : std::filesystem::recursive_directory_iterator("usr/lib32")) {
+            for (auto& entry : std::filesystem::recursive_directory_iterator("/usr/lib32")) {
                 if (!entry.is_regular_file())
                     continue;
 
