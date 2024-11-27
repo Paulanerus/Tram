@@ -82,6 +82,8 @@ namespace internal {
 
         void load();
 
+        void add_library(internal::library&& lib, bool global);
+
         const settings_conf& settings() const noexcept
         {
             return m_Settings;

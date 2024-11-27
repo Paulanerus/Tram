@@ -128,6 +128,11 @@ namespace internal {
         }
     }
 
+    void config_loader::add_library([[maybe_unused]] internal::library&& lib, [[maybe_unused]] bool global)
+    {
+        std::cout << "TODO: not yet implemented" << std::endl;
+    }
+
     void config_loader::resolve_placeholder()
     {
         static const std::unordered_map<std::string_view, std::string_view> placeholders = {
