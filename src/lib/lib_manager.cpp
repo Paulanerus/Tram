@@ -98,7 +98,7 @@ namespace lib {
         InstallLocation loc = validate_install(lib);
 
         if ((static_cast<std::underlying_type_t<InstallLocation>>(loc) >= 3) || (loc == InstallLocation::Global && global) || (loc == InstallLocation::Local && !global))
-            return NO_ERROR;
+            return make_error(ErrorCode::LibraryIsAlreadyInstalled);
 
         auto base_path = global ? fs::global_tram_dir() : std::filesystem::path(fs::TRAM_DIR);
         base_path /= fs::TRAM_LIBS;
