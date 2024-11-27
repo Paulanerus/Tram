@@ -35,6 +35,7 @@ int main(int argc, char* argv[])
         .help("Adds a new library.")
         .option(psap::make_flag("--global", "-g", "Installs the library into global scope."))
         .option(psap::make_value("--branch", "-b", "Select a specific branch."))
+        .option(psap::make_value("--alias", "-a", "Sets the library alias."))
         .action(tram::ADD_ACTION);
 
     parser.command("remove", "rem", "rm", "delete", "del")
