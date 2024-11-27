@@ -5,6 +5,7 @@
 #include <toml.hpp>
 
 #include "config/config.hpp"
+#include "curl/curl_client.hpp"
 #include "error/error.hpp"
 #include "gen/make/gen_makefile.hpp"
 #include "lib/lib_manager.hpp"
@@ -15,6 +16,7 @@
 #include <iostream>
 
 #include <curl/curl.h>
+#include <type_traits>
 
 namespace tram {
 
@@ -60,19 +62,33 @@ inline auto LIBS_ACTION = []([[maybe_unused]] const auto& _parser, const psap::C
 
     for (auto& lib : libs) {
 
-        auto [installed, in_global_scope] = lib::validate_install(lib);
+        lib::InstallLocation loc = lib::validate_install(lib);
+
+        bool installed = loc != lib::InstallLocation::None;
 
         if (has_installed_flag && !installed)
             continue;
 
-        std::cout << std::format("\t{} - [{}]\n", lib.name, (!has_installed_flag && installed ? std::format("{} {{}}", psap::color::light_green("installed"), in_global_scope ? "global" : "local") : psap::color::light_red("not installed")));
+        std::cout << std::format("\t{} - [{}]\n", lib.name, (!has_installed_flag && installed ? std::format("{} {{}}", psap::color::light_green("installed"), (static_cast<std::underlying_type_t<lib::InstallLocation>>(loc) >= 2) ? "global" : "local") : psap::color::light_red("not installed")));
     }
 
     std::cout << std::endl;
 };
 
-inline auto ADD_ACTION = []([[maybe_unused]] const auto& _parser, [[maybe_unused]] const auto& _cmd) {
+inline auto ADD_ACTION = []([[maybe_unused]] const auto& _parser, const auto& cmd) {
     tram::load_config();
+
+    curl::Client curl_client;
+
+    if (curl_client.failed()) {
+        std::cout << "Failed to initialize curl" << std::endl;
+        return;
+    }
+
+    for (auto& lib : tram::config().libraries()) {
+        if (auto err = lib::install_lib(curl_client, lib, cmd["--global"]))
+            err.report();
+    }
 };
 
 inline auto REMOVE_ACTION = [](const psap::ArgParser& parser, const auto& cmd) {

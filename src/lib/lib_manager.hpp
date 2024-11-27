@@ -1,20 +1,26 @@
 #pragma once
 
 #include "../config/config.hpp"
+#include "../curl/curl_client.hpp"
 #include "../error/error.hpp"
 
 namespace tram {
 namespace lib {
+    enum class InstallLocation {
+        None = 0,
+        Local = 1,
+        Global = 2,
+        Lib = 3,
+        Lib32 = 4
+    };
+
     namespace internal {
-        struct lib_validate_result {
-            bool installed;
-            bool in_global_scope;
-        };
+        std::string resolve_url(const std::string& url, const std::string& branch) noexcept;
     }
 
-    internal::lib_validate_result validate_install(const tram::internal::library& lib) noexcept;
+    InstallLocation validate_install(const tram::internal::library& lib) noexcept;
 
-    void install_lib(const tram::internal::library& lib, bool global) noexcept;
+    TramError install_lib(curl::Client& client, const tram::internal::library& lib, bool global) noexcept;
 
     TramError remove_lib(const tram::internal::library& lib, bool global) noexcept;
 }
