@@ -18,6 +18,8 @@ namespace lib {
         std::string resolve_url(const std::string& url, const std::string& branch) noexcept;
     }
 
+    TramError unpack_zipfile(const std::filesystem::path& archive_path, const std::filesystem::path& out_path) noexcept;
+
     InstallLocation validate_install(const tram::internal::library& lib) noexcept;
 
     TramError install_lib(curl::Client& client, const tram::internal::library& lib, bool global) noexcept;

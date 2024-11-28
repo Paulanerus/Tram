@@ -7,6 +7,7 @@
 #include <format>
 #include <system_error>
 #include <type_traits>
+#include <miniz/miniz.h>
 
 namespace tram {
 namespace lib {
@@ -28,6 +29,42 @@ namespace lib {
             else
                 return url;
         }
+    }
+
+    TramError unpack_zipfile(const std::filesystem::path& archive_path, [[maybe_unused]] const std::filesystem::path& out_path) noexcept
+    {
+        if (!archive_path.has_parent_path())
+            return make_error(ErrorCode::Miniz, "'archive_path' has no parent directory");
+
+        auto parent_path = archive_path.parent_path();
+
+        mz_zip_archive archive {};
+        if (!mz_zip_reader_init_file(&archive, archive_path.c_str(), 0))
+            return make_error(ErrorCode::Miniz, std::format("Failed to init zip reader ({})", mz_zip_get_error_string(archive.m_last_error)));
+
+        auto num_files = mz_zip_reader_get_num_files(&archive);
+        for (mz_uint i {}; i < num_files; i++) {
+            mz_zip_archive_file_stat file_stat;
+
+            if (!mz_zip_reader_file_stat(&archive, i, &file_stat)) {
+                make_error(ErrorCode::Miniz, std::format("Failed to read file info ({})", mz_zip_get_error_string(archive.m_last_error))).report();
+                continue;
+            }
+
+            if (mz_zip_reader_is_file_a_directory(&archive, i)) {
+                if (auto err = fs::create_dir_if_notexists(parent_path / file_stat.m_filename))
+                    err.report();
+            } else {
+                if (!mz_zip_reader_extract_to_file(&archive, i, (parent_path / file_stat.m_filename).c_str(), 0)) {
+                    make_error(ErrorCode::Miniz, std::format("Failed file extraction ({})", mz_zip_get_error_string(archive.m_last_error))).report();
+                    continue;
+                }
+            }
+        }
+
+        // FIXME: Rename root directory to 'out_path'.
+
+        return mz_zip_reader_end(&archive) ? NO_ERROR : make_error(ErrorCode::Miniz, std::format("Failed to close zip reader ({})", mz_zip_get_error_string(archive.m_last_error)));
     }
 
     InstallLocation validate_install(const tram::internal::library& lib) noexcept
@@ -107,6 +144,16 @@ namespace lib {
             return err;
 
         std::string url = internal::resolve_url(lib.url, lib.branch);
+
+        if (url.starts_with("http")) {
+            auto zip_path = base_path / std::format("{}.zip", lib.name);
+
+            if (auto err = client.download_file(zip_path, url))
+                return err;
+
+            if (auto err = unpack_zipfile(zip_path, base_path / lib.name))
+                return err;
+        }
 
         return NO_ERROR;
     }
