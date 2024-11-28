@@ -18,6 +18,7 @@ enum class ErrorCode {
     Curl,
     GlobalLibraryCannotBeRemoved,
     LibraryIsAlreadyInstalled,
+    Miniz,
 };
 
 class TramError {
@@ -104,6 +105,8 @@ private:
             return "GlobalLibraryCannotBeRemoved";
         case ErrorCode::LibraryIsAlreadyInstalled:
             return "LibraryIsAlreadyInstalled";
+        case ErrorCode::Miniz:
+            return "Miniz";
         default:
             return "None";
         }
