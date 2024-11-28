@@ -11,7 +11,7 @@ project "Tram"
 
     warnings "Extra"
 
-    links{"curl"}
+    links{"curl", "miniz"}
 
     includedirs{"libs/toml11/include", "libs/ArgParser/include"}
 
